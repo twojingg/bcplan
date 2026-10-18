@@ -1,0 +1,2457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1E6B4F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="体成分计划">
+<meta name="description" content="按日打卡的训练、饮食与采购计划">
+<title>体成分计划 · 48 周</title>
+<style>
+:root{
+  --green:#1E6B4F;
+  --green-2:#2F8A66;
+  --green-3:#E7F1EB;
+  --bg:#F3F4EF;
+  --card:#FFFFFF;
+  --ink:#1B1B18;
+  --muted:#7B7C74;
+  --line:#E3E5DD;
+  --amber:#B06F1C;
+  --amber-bg:#FBF0E2;
+  --red:#AD4630;
+  --red-bg:#FBEAE5;
+  --shadow:0 1px 2px rgba(20,30,20,.04), 0 8px 24px rgba(20,30,20,.05);
+  --radius:18px;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-text-size-adjust:100%;
+  padding-bottom:calc(78px + env(safe-area-inset-bottom));
+}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+h1,h2,h3,h4,p{margin:0}
+
+.app{max-width:980px;margin:0 auto;padding:0 14px}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:30;
+  background:rgba(243,244,239,.92);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--line);
+  padding:10px 0 8px;
+}
+.topbar-inner{max-width:980px;margin:0 auto;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:.2px}
+.brand .dot{width:9px;height:9px;border-radius:3px;background:var(--green);display:inline-block}
+.brand small{font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.4px}
+.daynav{display:flex;align-items:center;gap:4px}
+.iconbtn{
+  width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+  background:#fff;border:1px solid var(--line);color:var(--muted);font-size:18px;line-height:1;
+}
+.iconbtn:active{background:var(--green-3)}
+.daynav .today-btn{
+  height:34px;padding:0 12px;border-radius:11px;background:#fff;border:1px solid var(--line);
+  font-size:12.5px;color:var(--green);font-weight:600;
+}
+
+/* ---------- cards ---------- */
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px;margin-top:12px;
+}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.card-title{font-size:14.5px;font-weight:700;letter-spacing:.2px}
+.card-sub{font-size:11.5px;color:var(--muted)}
+.card-link{font-size:12px;color:var(--green);font-weight:600}
+
+/* ---------- hero ---------- */
+.hero{
+  margin-top:12px;background:linear-gradient(140deg,#1E6B4F 0%,#2C7F5E 55%,#3B8F6B 100%);
+  border-radius:22px;color:#fff;padding:18px 18px 16px;position:relative;overflow:hidden;
+  box-shadow:0 12px 30px rgba(30,107,79,.22);
+}
+.hero:after{content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hero-date{font-size:20px;font-weight:700;letter-spacing:.3px}
+.hero-meta{font-size:12px;opacity:.82;margin-top:2px}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:600;
+}
+.hero-stats{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap}
+.hstat{min-width:88px}
+.hstat .v{font-size:19px;font-weight:700;letter-spacing:.2px}
+.hstat .v span{font-size:11px;font-weight:500;opacity:.75;margin-left:2px}
+.hstat .k{font-size:11px;opacity:.75;margin-top:1px}
+.hero-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.18);margin-top:14px;overflow:hidden}
+.hero-bar i{display:block;height:100%;border-radius:99px;background:#fff;transition:width .3s ease}
+
+/* ---------- segmented ---------- */
+.seg{display:inline-flex;background:#F1F2EC;border-radius:10px;padding:3px;gap:2px}
+.seg button{
+  padding:5px 9px;border-radius:8px;font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap;
+}
+.seg button.on[data-v="done"]{background:var(--green);color:#fff}
+.seg button.on[data-v="part"]{background:#E9A94A;color:#3B2508}
+.seg button.on[data-v="none"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* ---------- exercise ---------- */
+.ex{padding:11px 0;border-top:1px dashed var(--line)}
+.ex:first-of-type{border-top:0}
+.ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ex-name{font-size:14px;font-weight:600;line-height:1.35}
+.ex-name em{font-style:normal;color:var(--muted);font-weight:500;font-size:12px;margin-left:6px}
+.ex-tip{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.45}
+.ex-meta{display:flex;gap:8px;margin-top:8px}
+.ex-meta input{
+  flex:1;min-width:0;height:34px;border-radius:10px;border:1px solid var(--line);background:#FAFAF7;
+  padding:0 10px;font-size:12.5px;outline:none;
+}
+.ex-meta input:focus{border-color:var(--green-2);background:#fff}
+
+/* ---------- meals ---------- */
+.meal{border-top:1px solid var(--line);padding:10px 0}
+.meal:first-of-type{border-top:0;padding-top:0}
+.meal-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.meal-name{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px}
+.meal-name .t{font-size:10.5px;color:var(--muted);font-weight:500}
+.meal-kcal{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.meal-kcal b{color:var(--ink);font-size:13px}
+.foodlist{margin-top:6px}
+.foodrow{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
+.foodrow .fn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.foodrow .fg{color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+.foodrow .fk{font-size:12px;font-variant-numeric:tabular-nums;min-width:48px;text-align:right}
+.del{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#B9BAB2;font-size:15px}
+.del:active{background:var(--red-bg);color:var(--red)}
+.addfood{
+  margin-top:6px;width:100%;height:36px;border-radius:11px;border:1px dashed #CFD8CF;
+  color:var(--green);font-size:12.5px;font-weight:600;background:#FBFCF9;
+}
+.addfood:active{background:var(--green-3)}
+.meal-empty{font-size:12px;color:#A9AAA2;padding:4px 0}
+
+/* ---------- habits ---------- */
+.habits{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.habit{background:#FAFAF7;border:1px solid var(--line);border-radius:14px;padding:10px}
+.habit .hk{font-size:11px;color:var(--muted)}
+.habit .hv{font-size:16px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.habit .hv span{font-size:11px;font-weight:500;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:6px;margin-top:6px}
+.stepper button{
+  width:26px;height:26px;border-radius:8px;background:#fff;border:1px solid var(--line);
+  font-size:15px;line-height:1;display:grid;place-items:center;color:var(--green)
+}
+.habit input[type=number]{
+  width:100%;height:30px;margin-top:6px;border:1px solid var(--line);border-radius:9px;background:#fff;
+  padding:0 8px;font-size:13px;outline:none;
+}
+.habit input:focus{border-color:var(--green-2)}
+
+/* ---------- note ---------- */
+.note{width:100%;min-height:62px;border:1px solid var(--line);border-radius:12px;background:#FAFAF7;padding:10px;font-size:13px;resize:vertical;outline:none;line-height:1.6}
+.note:focus{border-color:var(--green-2);background:#fff}
+
+/* ---------- buttons ---------- */
+.btn{
+  height:40px;padding:0 16px;border-radius:12px;font-size:13.5px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn.primary{background:var(--green);color:#fff}
+.btn.primary:active{background:#175840}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--red-bg);color:var(--red)}
+.btn.block{width:100%}
+
+/* ---------- tab bar ---------- */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.tabbar-inner{max-width:980px;margin:0 auto;display:flex}
+.tab{flex:1;padding:8px 0 7px;display:flex;flex-direction:column;align-items:center;gap:2px;color:#97988F}
+.tab .ti{font-size:18px;line-height:1}
+.tab .tl{font-size:10.5px;font-weight:600;letter-spacing:.2px}
+.tab.on{color:var(--green)}
+.tab.on .tl{font-weight:700}
+
+/* ---------- calendar ---------- */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-month{font-size:15px;font-weight:700}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.cal-week span{text-align:center;font-size:10.5px;color:var(--muted)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day{
+  aspect-ratio:1/1;border-radius:11px;background:#FAFAF7;border:1px solid transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12.5px;
+  color:var(--ink);position:relative;
+}
+.cal-day.out{opacity:.32}
+.cal-day .d{font-variant-numeric:tabular-nums}
+.cal-day .dot{width:5px;height:5px;border-radius:50%;background:#D9DAD2}
+.cal-day.done .dot{background:var(--green)}
+.cal-day.part .dot{background:#E0A03F}
+.cal-day.none .dot{background:#D14B33}
+.cal-day.rest{background:#F3F4EF}
+.cal-day.today{border-color:var(--green);background:var(--green-3)}
+.cal-day.today .d{font-weight:800;color:var(--green)}
+.cal-legend{display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.cal-legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#FAFAF7;border:1px solid var(--line);border-radius:14px;padding:11px}
+.stat .k{font-size:11px;color:var(--muted)}
+.stat .v{font-size:18px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:11px;font-weight:500;color:var(--muted);margin-left:2px}
+
+/* ---------- body metrics ---------- */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.field input{
+  width:100%;height:38px;border:1px solid var(--line);border-radius:11px;background:#FAFAF7;
+  padding:0 10px;font-size:13.5px;outline:none;font-variant-numeric:tabular-nums;
+}
+.field input:focus{border-color:var(--green-2);background:#fff}
+.mlist{margin-top:10px;border-top:1px solid var(--line)}
+.mrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.mrow .md{color:var(--muted);width:74px;flex:none;font-variant-numeric:tabular-nums}
+.mrow .mv{flex:1;font-variant-numeric:tabular-nums}
+.mrow .mv b{font-weight:700}
+.mrow .mv span{color:var(--muted);margin-left:4px}
+.chart{margin-top:10px}
+.chart svg{width:100%;height:auto;display:block}
+
+/* ---------- plan ---------- */
+details.acc{border-top:1px solid var(--line);padding:12px 0}
+details.acc:first-of-type{border-top:0;padding-top:2px}
+details.acc summary{list-style:none;display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:700;cursor:pointer}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary:after{content:"+";color:var(--muted);font-weight:400;font-size:18px}
+details.acc[open] summary:after{content:"–"}
+.acc-body{padding-top:8px;font-size:13px;color:#3A3B35;line-height:1.7}
+.acc-body p{margin:0 0 6px}
+.acc-body ul{margin:4px 0 6px;padding-left:18px}
+.acc-body li{margin:2px 0}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv b{font-weight:600}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700;background:var(--green-3);color:var(--green)}
+.tag.amber{background:var(--amber-bg);color:var(--amber)}
+.tag.red{background:var(--red-bg);color:var(--red)}
+.plan-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.plan-table th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;padding:5px 4px;border-bottom:1px solid var(--line)}
+.plan-table td{padding:6px 4px;border-bottom:1px dashed var(--line);vertical-align:top}
+.plan-table tr:last-child td{border-bottom:0}
+
+/* ---------- shopping ---------- */
+.shop-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.shop-prog{height:6px;border-radius:99px;background:#EDEEE7;overflow:hidden;margin:10px 0 4px}
+.shop-prog i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .25s}
+.shop-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.shop-item:last-child{border-bottom:0}
+.shop-check{
+  width:21px;height:21px;border-radius:7px;border:1.6px solid #C9CCC2;flex:none;
+  display:grid;place-items:center;color:#fff;font-size:12px;background:#fff;
+}
+.shop-item.on .shop-check{background:var(--green);border-color:var(--green)}
+.shop-item.on .sn{color:var(--muted);text-decoration:line-through}
+.shop-item .sn{font-size:13px;font-weight:600}
+.shop-item .sa{flex:1;text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.shop-cat{font-size:10.5px;color:var(--muted);width:34px;flex:none}
+
+/* ---------- modal ---------- */
+.overlay{
+  position:fixed;inset:0;background:rgba(20,25,20,.42);z-index:80;display:flex;align-items:flex-end;
+  justify-content:center;padding:0;animation:fade .16s ease;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{
+  background:#fff;width:100%;max-width:560px;border-radius:22px 22px 0 0;
+  max-height:88vh;display:flex;flex-direction:column;animation:up .22s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.sheet-h{padding:14px 16px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.sheet-t{font-size:15px;font-weight:700}
+.sheet-b{overflow-y:auto;padding:12px 16px;flex:1;-webkit-overflow-scrolling:touch}
+.sheet-f{padding:10px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;gap:8px}
+.search{
+  width:100%;height:42px;border:1px solid var(--line);border-radius:12px;background:#FAFAF7;
+  padding:0 12px;font-size:14px;outline:none;
+}
+.search:focus{border-color:var(--green-2);background:#fff}
+.cats{display:flex;gap:6px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.chip{
+  padding:6px 11px;border-radius:999px;background:#F2F3EC;font-size:11.5px;color:#5D5E56;white-space:nowrap;font-weight:600;border:1px solid transparent;
+}
+.chip.on{background:var(--green-3);color:var(--green);border-color:#C9DED2}
+.fitem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F0F1EA;cursor:pointer}
+.fitem:active{background:#FAFBF7}
+.fitem .fi{flex:1;min-width:0}
+.fitem .fname{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fitem .fsub{font-size:11px;color:var(--muted);margin-top:1px}
+.fitem .fk{font-size:12.5px;color:var(--green);font-weight:700;font-variant-numeric:tabular-nums}
+.custom-tag{font-size:9.5px;background:var(--amber-bg);color:var(--amber);padding:1px 5px;border-radius:5px;margin-left:5px;vertical-align:1px}
+.grams{display:flex;gap:8px;align-items:center;margin:6px 0 10px}
+.grams input{
+  flex:1;height:46px;border:1px solid var(--line);border-radius:13px;padding:0 12px;font-size:18px;font-weight:700;
+  text-align:center;outline:none;font-variant-numeric:tabular-nums;
+}
+.grams .u{font-size:12px;color:var(--muted);width:34px}
+.qchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.qchip{padding:6px 12px;border-radius:9px;background:#F2F3EC;font-size:12px;font-weight:600;color:#55564E}
+.qchip.on{background:var(--green);color:#fff}
+.calcbox{background:var(--green-3);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;margin-bottom:10px}
+.calcbox .cv{font-size:18px;font-weight:800;color:var(--green)}
+.calcbox .ck{font-size:10.5px;color:#5F7A6C}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);
+  background:rgba(27,32,27,.92);color:#fff;font-size:12.5px;padding:8px 14px;border-radius:999px;z-index:99;
+  opacity:0;transition:.22s ease;pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- records sub nav ---------- */
+.subnav{display:flex;background:#E9EBE3;border-radius:13px;padding:3px;margin-top:12px}
+.subnav button{flex:1;height:36px;border-radius:10px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.subnav button.on{background:#fff;color:var(--green);box-shadow:0 1px 3px rgba(20,30,20,.08)}
+.wrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.wrow:last-child{border-bottom:0}
+.wrow .wd{width:56px;flex:none;font-size:12px;line-height:1.25;color:var(--ink);font-weight:600}
+.wrow .wn{flex:1;min-width:0;font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wrow .ws{font-size:11px;padding:3px 9px;border-radius:999px;background:#F1F2EC;color:var(--muted);white-space:nowrap}
+.wrow .ws.done{background:var(--green-3);color:var(--green)}
+.wrow .ws.part{background:var(--amber-bg);color:var(--amber)}
+.wrow .ws.miss{background:var(--red-bg);color:var(--red)}
+
+/* ---------- swap exercise ---------- */
+.exdir{font-size:10.5px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.eqtag{font-size:9.5px;font-weight:600;color:#77786F;background:#F1F2EC;padding:1px 6px;border-radius:5px}
+.swap{flex:none;height:30px;padding:0 12px;border-radius:9px;border:1px solid #CFDCD3;background:#F7FBF8;color:var(--green);font-size:12px;font-weight:700}
+.opt{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;border:1px solid var(--line);margin-bottom:8px;cursor:pointer}
+.opt.on{border-color:#9CC4AE;background:#F5FAF7}
+.oi{flex:1;min-width:0}
+.optname{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.osub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.45}
+.ocheck{color:var(--green);font-weight:800;font-size:15px}
+.chk{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#3A3B35;padding:10px 2px 2px;cursor:pointer}
+.cbox{width:20px;height:20px;border-radius:6px;border:1.6px solid #C9CCC2;display:grid;place-items:center;font-size:12px;color:#fff;background:#fff;flex:none}
+.cbox.on{background:var(--green);border-color:var(--green)}
+.slotrow{padding:10px 0;border-bottom:1px dashed var(--line)}
+.slotrow:last-child{border-bottom:0}
+.slotdir{font-size:10.5px;font-weight:700;color:var(--green)}
+.slotdef{font-size:12.5px;font-weight:600;margin-top:2px}
+.slotopts{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.optpill{font-size:10.5px;padding:3px 8px;border-radius:999px;background:#F2F3EC;color:#5D5E56;display:inline-flex;align-items:center;gap:4px}
+.optpill.on{background:var(--green-3);color:var(--green)}
+.optpill i{font-style:normal;color:#9A9B93;font-size:9px}
+.optpill.on i{color:#6C8F7C}
+
+/* ---------- tutorial ---------- */
+.tut{border-bottom:1px solid var(--line)}
+.tut:last-child{border-bottom:0}
+.tut-h{display:flex;align-items:center;gap:12px;padding:10px 0;cursor:pointer}
+.tut-thumb{width:92px;height:62px;flex:none;border-radius:12px;overflow:hidden;background:#F1F6F2}
+.tut-thumb svg{width:100%;height:100%;display:block}
+.tut-meta{flex:1;min-width:0}
+.tut-name{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tut-sub{font-size:10.5px;color:var(--muted);margin-top:3px}
+.tut-arrow{width:22px;text-align:center;color:#A9AAA2;font-size:18px;flex:none}
+.tut.open .tut-arrow{color:var(--green)}
+.tut-body{padding:2px 0 14px}
+.tut-fig{position:relative;border-radius:14px;overflow:hidden;background:#F1F6F2;margin-bottom:2px}
+.tut-fig.live{cursor:pointer}
+.livebadge{position:absolute;right:8px;bottom:8px;background:rgba(30,107,79,.88);color:#fff;font-size:9.5px;padding:3px 8px;border-radius:999px;pointer-events:none}
+.livebadge2{font-size:9px;font-weight:700;background:#E7F1EB;color:#1E6B4F;padding:1px 6px;border-radius:5px}
+.tut-fig svg{width:100%;height:auto;display:block}
+.tut-sec{font-size:11px;font-weight:800;color:var(--green);margin:12px 0 5px;letter-spacing:.5px}
+.steps{margin:0;padding-left:19px;font-size:12.5px;line-height:1.75;color:#3A3B35}
+.steps li{margin:2px 0}
+.errs{margin:0;padding:0;list-style:none;font-size:12.5px;line-height:1.75;color:#8A4A22}
+.errs li:before{content:"✕ ";font-size:10px;color:#C05621}
+.tut-breath{background:var(--green-3);border-radius:11px;padding:9px 11px;font-size:11.5px;line-height:1.6;color:#2C5745;margin-top:10px}
+.tut-safe{background:var(--amber-bg);border-radius:11px;padding:9px 11px;font-size:11.5px;line-height:1.6;color:#7A4E14;margin-top:8px}
+
+/* ---------- misc ---------- */
+.hr{height:1px;background:var(--line);margin:12px 0}
+.muted{color:var(--muted)}
+.small{font-size:11.5px}
+.center{text-align:center}
+.section-gap{height:4px}
+.row{display:flex;align-items:center;gap:8px}
+.row.between{justify-content:space-between}
+.warnbox{background:var(--amber-bg);border-radius:12px;padding:10px 12px;font-size:12px;color:#7A4E14;line-height:1.6}
+
+@media(min-width:880px){
+  body{font-size:15px}
+  .today-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:12px;align-items:start}
+  .today-grid > .card{margin-top:0}
+  .today-grid .col{display:flex;flex-direction:column;gap:12px}
+  .habit{padding:12px}
+  .tabbar-inner{border-left:1px solid var(--line);border-right:1px solid var(--line);border-radius:18px 18px 0 0}
+}
+
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+<script>
+/* ---------- 食物库：热量 kcal / 蛋白质 g，均以 100g 计 ---------- */
+const CATS = ["全部","主食","肉蛋","豆制品","蔬菜","水果","乳品","坚果","家常菜","饮品","零食","调味"];
+
+const FOODS = [
+  // 主食
+  {i:"rice",n:"米饭",k:116,p:2.6,c:"主食",g:150,u:"碗"},
+  {i:"mixedrice",n:"杂粮饭",k:120,p:3.0,c:"主食",g:150,u:"碗"},
+  {i:"brownrice",n:"糙米饭",k:112,p:2.6,c:"主食",g:150,u:"碗"},
+  {i:"congee",n:"白粥",k:46,p:1.1,c:"主食",g:300,u:"碗"},
+  {i:"millet",n:"小米粥",k:46,p:1.4,c:"主食",g:300,u:"碗"},
+  {i:"oats",n:"燕麦片",k:377,p:15.0,c:"主食",g:50,u:"份"},
+  {i:"bread",n:"全麦面包",k:246,p:9.0,c:"主食",g:35,u:"片"},
+  {i:"mantou",n:"馒头",k:223,p:7.0,c:"主食",g:100,u:"个"},
+  {i:"vegbun",n:"菜包",k:200,p:6.0,c:"主食",g:100,u:"个"},
+  {i:"meatbun",n:"肉包",k:250,p:8.0,c:"主食",g:100,u:"个"},
+  {i:"corn",n:"玉米",k:112,p:4.0,c:"主食",g:150,u:"根"},
+  {i:"sweetpotato",n:"红薯",k:86,p:1.6,c:"主食",g:150,u:"个"},
+  {i:"potato",n:"土豆",k:77,p:2.0,c:"主食",g:150,u:"个"},
+  {i:"buckwheat",n:"荞麦面（熟）",k:110,p:4.5,c:"主食",g:200,u:"碗"},
+  {i:"noodle",n:"面条（熟）",k:110,p:4.0,c:"主食",g:200,u:"碗"},
+  {i:"pasta",n:"意面（熟）",k:150,p:5.5,c:"主食",g:150,u:"份"},
+  {i:"dumpling",n:"饺子",k:220,p:9.0,c:"主食",g:200,u:"份"},
+  {i:"ricecake",n:"年糕",k:154,p:3.0,c:"主食",g:100,u:"份"},
+  {i:"vermicelli",n:"粉丝（熟）",k:80,p:0.2,c:"主食",g:100,u:"份"},
+
+  // 肉蛋
+  {i:"egg",n:"鸡蛋",k:144,p:13.3,c:"肉蛋",g:50,u:"个"},
+  {i:"boiledegg",n:"水煮蛋",k:144,p:13.0,c:"肉蛋",g:50,u:"个"},
+  {i:"chickenbreast",n:"鸡胸肉",k:133,p:19.4,c:"肉蛋",g:150,u:"份"},
+  {i:"chickenleg",n:"鸡腿肉（去皮）",k:150,p:19.0,c:"肉蛋",g:150,u:"个"},
+  {i:"chickenwing",n:"鸡翅",k:194,p:17.0,c:"肉蛋",g:100,u:"个"},
+  {i:"beeflean",n:"瘦牛肉",k:106,p:20.2,c:"肉蛋",g:150,u:"份"},
+  {i:"brisket",n:"牛腩",k:250,p:18.0,c:"肉蛋",g:150,u:"份"},
+  {i:"porkloin",n:"猪里脊",k:155,p:20.0,c:"肉蛋",g:150,u:"份"},
+  {i:"porklean",n:"猪瘦肉",k:143,p:20.0,c:"肉蛋",g:150,u:"份"},
+  {i:"porkbelly",n:"五花肉",k:518,p:9.0,c:"肉蛋",g:100,u:"份"},
+  {i:"ribs",n:"排骨",k:278,p:17.0,c:"肉蛋",g:150,u:"份"},
+  {i:"shrimp",n:"虾仁",k:93,p:18.0,c:"肉蛋",g:100,u:"份"},
+  {i:"sausage",n:"火腿肠",k:212,p:14.0,c:"肉蛋",g:50,u:"根"},
+  {i:"bacon",n:"培根",k:417,p:22.0,c:"肉蛋",g:30,u:"片"},
+
+  // 豆制品
+  {i:"tofuN",n:"北豆腐",k:98,p:12.2,c:"豆制品",g:200,u:"块"},
+  {i:"tofuS",n:"南豆腐",k:57,p:6.0,c:"豆制品",g:200,u:"块"},
+  {i:"tofudry",n:"豆干",k:142,p:16.0,c:"豆制品",g:100,u:"份"},
+  {i:"fuzhu",n:"腐竹（干）",k:461,p:44.0,c:"豆制品",g:30,u:"份"},
+  {i:"soymilk",n:"无糖豆浆",k:25,p:2.5,c:"豆制品",g:300,u:"杯"},
+  {i:"tofupudding",n:"豆腐脑",k:47,p:4.0,c:"豆制品",g:300,u:"碗"},
+  {i:"edamame",n:"毛豆",k:131,p:13.0,c:"豆制品",g:100,u:"份"},
+
+  // 蔬菜
+  {i:"broccoli",n:"西兰花",k:36,p:4.1,c:"蔬菜",g:200,u:"份"},
+  {i:"greens",n:"青菜",k:15,p:1.5,c:"蔬菜",g:200,u:"份"},
+  {i:"spinach",n:"菠菜",k:28,p:2.6,c:"蔬菜",g:200,u:"份"},
+  {i:"lettuce",n:"生菜",k:16,p:1.3,c:"蔬菜",g:100,u:"份"},
+  {i:"cucumber",n:"黄瓜",k:16,p:0.8,c:"蔬菜",g:150,u:"根"},
+  {i:"tomato",n:"番茄",k:20,p:0.9,c:"蔬菜",g:150,u:"个"},
+  {i:"mushroom",n:"蘑菇",k:24,p:2.7,c:"蔬菜",g:150,u:"份"},
+  {i:"shiitake",n:"香菇",k:26,p:2.2,c:"蔬菜",g:100,u:"份"},
+  {i:"fungus",n:"木耳（水发）",k:27,p:1.5,c:"蔬菜",g:100,u:"份"},
+  {i:"carrot",n:"胡萝卜",k:39,p:1.0,c:"蔬菜",g:100,u:"根"},
+  {i:"onion",n:"洋葱",k:40,p:1.1,c:"蔬菜",g:100,u:"个"},
+  {i:"cabbage",n:"包菜",k:24,p:1.5,c:"蔬菜",g:200,u:"份"},
+  {i:"chinesecabbage",n:"白菜",k:17,p:1.5,c:"蔬菜",g:200,u:"份"},
+  {i:"eggplant",n:"茄子",k:23,p:1.1,c:"蔬菜",g:150,u:"份"},
+  {i:"pepper",n:"青椒",k:22,p:1.0,c:"蔬菜",g:100,u:"个"},
+  {i:"beansprout",n:"豆芽",k:18,p:2.1,c:"蔬菜",g:150,u:"份"},
+  {i:"wintermelon",n:"冬瓜",k:12,p:0.4,c:"蔬菜",g:200,u:"份"},
+  {i:"pumpkin",n:"南瓜",k:23,p:0.7,c:"蔬菜",g:200,u:"份"},
+  {i:"lotus",n:"莲藕",k:73,p:1.9,c:"蔬菜",g:150,u:"份"},
+  {i:"celery",n:"芹菜",k:17,p:0.8,c:"蔬菜",g:150,u:"份"},
+  {i:"bokchoy",n:"娃娃菜",k:13,p:1.3,c:"蔬菜",g:200,u:"份"},
+
+  // 水果
+  {i:"apple",n:"苹果",k:53,p:0.2,c:"水果",g:200,u:"个"},
+  {i:"banana",n:"香蕉",k:93,p:1.4,c:"水果",g:120,u:"根"},
+  {i:"orange",n:"橙子",k:48,p:0.8,c:"水果",g:200,u:"个"},
+  {i:"blueberry",n:"蓝莓",k:57,p:0.7,c:"水果",g:100,u:"盒"},
+  {i:"kiwi",n:"猕猴桃",k:61,p:1.1,c:"水果",g:100,u:"个"},
+  {i:"grape",n:"葡萄",k:45,p:0.5,c:"水果",g:150,u:"份"},
+  {i:"watermelon",n:"西瓜",k:31,p:0.6,c:"水果",g:300,u:"份"},
+  {i:"pear",n:"梨",k:51,p:0.4,c:"水果",g:200,u:"个"},
+  {i:"cherrytomato",n:"圣女果",k:25,p:0.9,c:"水果",g:150,u:"份"},
+
+  // 乳品
+  {i:"milk",n:"牛奶",k:54,p:3.0,c:"乳品",g:250,u:"盒"},
+  {i:"skimmilk",n:"脱脂牛奶",k:33,p:3.4,c:"乳品",g:250,u:"盒"},
+  {i:"yogurt",n:"无糖酸奶",k:60,p:3.5,c:"乳品",g:150,u:"杯"},
+  {i:"greekyogurt",n:"希腊酸奶",k:97,p:9.0,c:"乳品",g:150,u:"杯"},
+
+  // 坚果
+  {i:"almond",n:"杏仁",k:579,p:21.0,c:"坚果",g:10,u:"份"},
+  {i:"walnut",n:"核桃",k:646,p:15.0,c:"坚果",g:10,u:"份"},
+  {i:"cashew",n:"腰果",k:553,p:18.0,c:"坚果",g:10,u:"份"},
+  {i:"peanut",n:"花生",k:574,p:26.0,c:"坚果",g:10,u:"份"},
+  {i:"mixednut",n:"混合坚果",k:600,p:20.0,c:"坚果",g:10,u:"包"},
+
+  // 家常菜 / 食堂菜
+  {i:"tomatoegg",n:"番茄炒蛋",k:86,p:5.0,c:"家常菜",g:150,u:"份"},
+  {i:"pepperchicken",n:"青椒炒鸡胸",k:110,p:14.0,c:"家常菜",g:150,u:"份"},
+  {i:"steamedchicken",n:"清蒸鸡（去皮）",k:150,p:20.0,c:"家常菜",g:150,u:"份"},
+  {i:"boiledchicken",n:"白切鸡",k:165,p:20.0,c:"家常菜",g:150,u:"份"},
+  {i:"braisedbeef",n:"卤牛肉",k:190,p:28.0,c:"家常菜",g:100,u:"份"},
+  {i:"braisedpork",n:"红烧肉",k:470,p:9.0,c:"家常菜",g:100,u:"份"},
+  {i:"sweetsour",n:"糖醋里脊",k:280,p:12.0,c:"家常菜",g:100,u:"份"},
+  {i:"friedchicken",n:"炸鸡腿",k:260,p:18.0,c:"家常菜",g:100,u:"个"},
+  {i:"twicecooked",n:"回锅肉",k:380,p:12.0,c:"家常菜",g:100,u:"份"},
+  {i:"boiledmeat",n:"水煮肉片",k:230,p:14.0,c:"家常菜",g:150,u:"份"},
+  {i:"mapotofu",n:"麻婆豆腐",k:130,p:8.0,c:"家常菜",g:150,u:"份"},
+  {i:"hometofu",n:"家常豆腐",k:140,p:9.0,c:"家常菜",g:150,u:"份"},
+  {i:"stirfryveg",n:"清炒时蔬",k:70,p:2.0,c:"家常菜",g:150,u:"份"},
+  {i:"garlicbroccoli",n:"蒜蓉西兰花",k:75,p:3.0,c:"家常菜",g:150,u:"份"},
+  {i:"cucumbersalad",n:"凉拌黄瓜",k:45,p:1.0,c:"家常菜",g:150,u:"份"},
+  {i:"fungussalad",n:"凉拌木耳",k:50,p:1.5,c:"家常菜",g:100,u:"份"},
+  {i:"mushroomchicken",n:"香菇滑鸡",k:140,p:15.0,c:"家常菜",g:150,u:"份"},
+  {i:"tomatobrisket",n:"番茄牛腩",k:130,p:12.0,c:"家常菜",g:150,u:"份"},
+  {i:"potatobeef",n:"土豆炖牛肉",k:150,p:11.0,c:"家常菜",g:150,u:"份"},
+  {i:"soup",n:"紫菜蛋花汤",k:25,p:2.0,c:"家常菜",g:250,u:"碗"},
+  {i:"ribsoup",n:"排骨汤",k:40,p:3.0,c:"家常菜",g:250,u:"碗"},
+  {i:"friedrice",n:"蛋炒饭",k:180,p:5.0,c:"家常菜",g:200,u:"份"},
+  {i:"friednoodle",n:"炒面",k:200,p:6.0,c:"家常菜",g:200,u:"份"},
+  {i:"malatang",n:"麻辣烫（清汤）",k:90,p:7.0,c:"家常菜",g:300,u:"份"},
+  {i:"beefnoodle",n:"牛肉面",k:130,p:7.0,c:"家常菜",g:400,u:"碗"},
+  {i:"salad",n:"轻食沙拉（无酱）",k:45,p:4.0,c:"家常菜",g:200,u:"份"},
+  {i:"youtiao",n:"油条",k:388,p:7.0,c:"家常菜",g:50,u:"根"},
+  {i:"frieddumpling",n:"煎饺",k:250,p:9.0,c:"家常菜",g:150,u:"份"},
+
+  // 饮品 / 零食
+  {i:"cola",n:"可乐",k:43,p:0,c:"饮品",g:330,u:"罐"},
+  {i:"milktea",n:"奶茶",k:90,p:1.0,c:"饮品",g:500,u:"杯"},
+  {i:"coffee",n:"美式咖啡",k:2,p:0.2,c:"饮品",g:300,u:"杯"},
+  {i:"beer",n:"啤酒",k:43,p:0.4,c:"饮品",g:330,u:"罐"},
+  {i:"chips",n:"薯片",k:536,p:7.0,c:"零食",g:50,u:"包"},
+  {i:"chocolate",n:"巧克力",k:546,p:5.0,c:"零食",g:30,u:"块"},
+  {i:"cake",n:"蛋糕",k:350,p:6.0,c:"零食",g:80,u:"块"},
+  {i:"icecream",n:"冰淇淋",k:207,p:3.5,c:"零食",g:70,u:"个"},
+  {i:"biscuit",n:"饼干",k:435,p:6.0,c:"零食",g:30,u:"份"},
+
+  // 调味
+  {i:"oil",n:"食用油",k:899,p:0,c:"调味",g:10,u:"勺"},
+  {i:"peanutsauce",n:"花生酱",k:588,p:25.0,c:"调味",g:15,u:"勺"},
+  {i:"sugar",n:"白砂糖",k:400,p:0,c:"调味",g:5,u:"勺"}
+];
+
+const FOOD_MAP = {};
+FOODS.forEach(f => FOOD_MAP[f.i] = f);
+
+/* ---------- 常用套餐（一键添加） ---------- */
+const PRESETS = [
+  {id:"bA", name:"早餐A", meal:"breakfast", items:[["boiledegg",100],["soymilk",300],["vegbun",100],["cucumber",100]]},
+  {id:"bB", name:"早餐B", meal:"breakfast", items:[["boiledegg",100],["millet",300],["corn",100]]},
+  {id:"bC", name:"早餐C", meal:"breakfast", items:[["boiledegg",100],["milk",250],["mantou",60]]},
+  {id:"lCan", name:"食堂午餐", meal:"lunch", items:[["rice",150],["boiledchicken",150],["greens",200]]},
+  {id:"lSalad", name:"轻食沙拉", meal:"lunch", items:[["salad",200],["chickenbreast",120],["corn",80]]},
+  {id:"lNoodle", name:"牛肉面", meal:"lunch", items:[["beefnoodle",400],["greens",100]]},
+  {id:"sYog", name:"酸奶坚果", meal:"snack", items:[["yogurt",150],["mixednut",10]]},
+  {id:"sEgg", name:"蛋+香蕉", meal:"snack", items:[["boiledegg",50],["banana",120]]},
+  {id:"dChicken", name:"鸡胸晚餐", meal:"dinner", items:[["chickenbreast",150],["broccoli",200],["mixedrice",100]]},
+  {id:"dTofu", name:"豆腐晚餐", meal:"dinner", items:[["tofuN",200],["greens",200],["corn",150]]}
+];
+
+/* ---------- 训练 ----------
+   每个动作位（slot）有一个固定“方向”，下面挂若干个可替换动作。
+   到公司健身房先看有什么器械，能对上哪个就用哪个；没有器械就用自重版。 */
+const EX = {
+  // 通用
+  warmup:{n:"热身", eq:"—", s:"8 分钟", tip:"快走 4 分钟 + 臀桥 15 + 鸟狗 8/侧 + 髋绕环 10/侧"},
+  warm:{n:"热身", eq:"—", s:"5 分钟", tip:"慢速启动，心率慢慢上来"},
+  cool:{n:"放松", eq:"—", s:"3 分钟", tip:"降速，别马上坐下"},
+  stretch:{n:"拉伸 10 分钟", eq:"—", s:"髋屈肌 / 臀 / 胸 / 背", tip:"每个动作 30 秒，呼吸放松"},
+
+  // A 蹲类
+  legpress:{n:"腿举机", eq:"器械", s:"4 × 10–12", tip:"背臀贴紧靠垫，下放到大腿约 90° 即停"},
+  hack:{n:"哈克深蹲", eq:"器械", s:"4 × 10–12", tip:"背贴垫，膝盖不内扣，不蹲到底"},
+  smithsquat:{n:"史密斯机深蹲", eq:"器械", s:"4 × 10–12", tip:"脚略前，背贴杠，全程不弓腰"},
+  goblet:{n:"哑铃高脚杯深蹲", eq:"哑铃", s:"4 × 10–12", tip:"双手抱哑铃贴胸，蹲到大腿平行"},
+  bss:{n:"保加利亚分腿蹲", eq:"哑铃 + 凳", s:"3 × 8/侧", tip:"后脚搭凳，上身直立，步幅小"},
+  stepup:{n:"台阶上步", eq:"哑铃 + 台阶", s:"3 × 10/侧", tip:"全脚掌上台阶，后腿不蹬地借力"},
+  wall:{n:"靠墙静蹲", eq:"徒手", s:"3 × 45 秒", tip:"背贴墙，膝盖约 90°，腰不悬空"},
+
+  // A 髋伸
+  hipthrust:{n:"肩靠凳髋推", eq:"杠铃 + 凳", s:"4 × 12–15", tip:"顶到躯干与大腿成直线，不靠挺腰"},
+  glutebridge:{n:"臀桥", eq:"徒手 / 哑铃", s:"3 × 15–20", tip:"脚跟发力，顶端夹臀 2 秒"},
+  cablehip:{n:"绳索髋伸", eq:"龙门架", s:"3 × 12/侧", tip:"脚踝绑带，腿后伸，腰不塌"},
+  bandhip:{n:"弹力带髋伸", eq:"弹力带", s:"3 × 15/侧", tip:"站姿后踢，核心收紧不晃"},
+
+  // A 膝屈
+  legcurl:{n:"腿弯举机", eq:"器械", s:"4 × 12", tip:"慢放 3 秒，不要甩"},
+  nordic:{n:"北欧挺", eq:"固定脚踝", s:"3 × 6–8", tip:"离心控制，腰不塌；做不到就退回臀桥"},
+  slider:{n:"滑盘腿弯举", eq:"滑盘 + 地板", s:"3 × 10", tip:"臀离地，慢收慢放"},
+  bandcurl:{n:"弹力带腿弯举", eq:"弹力带", s:"3 × 15/侧", tip:"俯卧勾腿，髋不抬"},
+
+  // B 水平推
+  chestpress:{n:"坐姿推胸机", eq:"器械", s:"4 × 10–12", tip:"背贴垫，肩胛微收，不耸肩"},
+  dumbbellpress:{n:"哑铃卧推", eq:"哑铃 + 凳", s:"4 × 10–12", tip:"肩胛后收，手腕中立"},
+  smithpress:{n:"史密斯卧推", eq:"器械", s:"4 × 10–12", tip:"落点在下胸，肘约 45°"},
+  pushup:{n:"俯卧撑", eq:"徒手", s:"3 × 10–15", tip:"可跪姿或手撑高，身体成一条线"},
+  bandpress:{n:"弹力带推胸", eq:"弹力带", s:"3 × 15", tip:"站姿，带子绕背，推到手臂伸直"},
+  pecdeck:{n:"蝴蝶机夹胸", eq:"器械", s:"3 × 12", tip:"胸肌孤立动作；替代推胸时用轻重量，肘微屈，不耸肩"},
+
+  // B 垂直拉
+  pulldown:{n:"高位下拉", eq:"器械", s:"4 × 10–12", tip:"身体略后倾固定，不靠后仰甩重量"},
+  assistedpull:{n:"辅助引体", eq:"辅助机", s:"4 × 6–10", tip:"先沉肩胛，再拉"},
+  bandpull:{n:"弹力带下拉", eq:"弹力带", s:"3 × 15", tip:"固定高处，肘往腰走"},
+  straightarm:{n:"直臂下压", eq:"龙门架", s:"3 × 12", tip:"背阔肌孤立动作；替代下拉时用轻重量，手臂微屈，不耸肩"},
+
+  // B 水平拉
+  row:{n:"坐姿划船机", eq:"器械", s:"4 × 12", tip:"胸口贴垫，肩胛后收，不弓背"},
+  chestrow:{n:"胸支撑划船", eq:"器械", s:"4 × 12", tip:"胸口贴垫，背发力"},
+  dbrow:{n:"单臂哑铃划船", eq:"哑铃 + 凳", s:"4 × 10/侧", tip:"一手撑凳，背平直，不扭转"},
+  cablerow:{n:"绳索划船", eq:"龙门架", s:"4 × 12", tip:"坐姿，腰背挺直"},
+  bandrow:{n:"弹力带划船", eq:"弹力带", s:"3 × 15", tip:"固定低处，肘贴身后拉"},
+
+  // C 髋伸（负重）
+  hipthrustW:{n:"负重髋推", eq:"杠铃 + 凳", s:"4 × 10–12", tip:"臀部发力，顶端不挺腰"},
+  glutebridgeW:{n:"负重臀桥", eq:"哑铃", s:"4 × 12–15", tip:"哑铃放髋部，顶端夹臀"},
+  cablehip2:{n:"绳索髋伸", eq:"龙门架", s:"3 × 12/侧", tip:"腿后伸，核心收紧"},
+  bandhip2:{n:"弹力带髋伸", eq:"弹力带", s:"3 × 15/侧", tip:"站姿后踢，不塌腰"},
+
+  // C 拉
+  rowChest:{n:"胸支撑划船", eq:"器械", s:"4 × 12", tip:"背部平直，不扭转"},
+  dbrowC:{n:"单臂哑铃划船", eq:"哑铃 + 凳", s:"4 × 10/侧", tip:"一手撑凳，背平直"},
+  cablerowC:{n:"绳索划船", eq:"龙门架", s:"4 × 12", tip:"腰背挺直，肩胛后收"},
+  bandrowC:{n:"弹力带划船", eq:"弹力带", s:"3 × 15", tip:"固定低处，肘贴身后拉"},
+
+  // C 单腿
+  splitsquat:{n:"反向箭步蹲", eq:"哑铃 / 徒手", s:"4 × 8/侧", tip:"步幅小、上身直、膝盖不内扣"},
+  bssC:{n:"保加利亚分腿蹲", eq:"哑铃 + 凳", s:"3 × 8/侧", tip:"后脚搭凳，重心在前脚"},
+  stepupC:{n:"台阶上步", eq:"哑铃 + 台阶", s:"3 × 10/侧", tip:"全脚掌上台阶，不蹬地"},
+  lunge:{n:"原地分腿蹲", eq:"徒手", s:"3 × 12/侧", tip:"下蹲到后膝接近地面"},
+
+  // 核心
+  deadbugA:{n:"死虫 + 屈膝侧平板", eq:"徒手", s:"3×8/侧 + 2×25 秒", tip:"腰始终贴地、不塌，呼气收腹"},
+  deadbugB:{n:"死虫 + Pallof 抗旋转", eq:"徒手 + 弹力带", s:"3×8/侧 + 3×10/侧", tip:"骨盆不晃，呼气时收紧"},
+  birddog:{n:"鸟狗 + 轻农夫行走", eq:"徒手 + 哑铃", s:"3×8/侧 + 3×20 米", tip:"走路时核心绷紧，不塌腰"},
+
+  // 有氧
+  walk:{n:"坡度快走（跑步机）", eq:"跑步机", s:"25–30 分钟", tip:"坡度 6–10%，速度 4.5–5.5 km/h，心率 110–130"},
+  elliptical:{n:"椭圆机", eq:"器械", s:"25–30 分钟", tip:"阻力中等，心率 110–130"},
+  bike:{n:"动感单车", eq:"器械", s:"25–30 分钟", tip:"坐垫调高，膝盖不内扣"},
+  rower:{n:"划船机", eq:"器械", s:"20 分钟", tip:"腿-髋-手顺序发力，腰别塌"},
+  stair:{n:"爬楼机", eq:"器械", s:"15–20 分钟", tip:"全脚掌踩实，扶把手别太重"},
+  swim:{n:"游泳", eq:"泳池", s:"30 分钟", tip:"自由泳为主，蛙泳腰不适就换"},
+  outdoor:{n:"户外快走", eq:"无", s:"35 分钟", tip:"能说话但略喘的强度"}
+};
+
+const TRAIN = {
+  A:{
+    name:"下肢 + 臀", tag:"力量 A", day:"周一",
+    slots:[
+      {id:"legpress", dir:"蹲类 · 股四头肌 + 臀", def:"legpress", opts:["legpress","hack","smithsquat","goblet","bss","stepup","wall"]},
+      {id:"hipthrust", dir:"髋伸 · 臀", def:"hipthrust", opts:["hipthrust","glutebridge","cablehip","bandhip"]},
+      {id:"legcurl", dir:"膝屈 · 腿后侧", def:"legcurl", opts:["legcurl","nordic","slider","bandcurl"]},
+      {id:"deadbugA", dir:"核心 · 抗伸展", def:"deadbugA", opts:["deadbugA"]}
+    ]
+  },
+  B:{
+    name:"上肢 + 背", tag:"力量 B", day:"周三",
+    slots:[
+      {id:"chestpress", dir:"水平推 · 胸 + 三头", def:"chestpress", opts:["chestpress","dumbbellpress","smithpress","pushup","bandpress","pecdeck"]},
+      {id:"pulldown", dir:"垂直拉 · 背阔肌", def:"pulldown", opts:["pulldown","assistedpull","bandpull","straightarm"]},
+      {id:"row", dir:"水平拉 · 中背", def:"row", opts:["row","chestrow","dbrow","cablerow","bandrow"]},
+      {id:"deadbugB", dir:"核心 · 抗旋转", def:"deadbugB", opts:["deadbugB"]}
+    ]
+  },
+  C:{
+    name:"后链 + 全身", tag:"力量 C", day:"周五",
+    slots:[
+      {id:"hipthrustW", dir:"髋伸 · 臀（负重）", def:"hipthrustW", opts:["hipthrustW","glutebridgeW","cablehip2","bandhip2"]},
+      {id:"rowChest", dir:"水平拉 · 中背", def:"rowChest", opts:["rowChest","dbrowC","cablerowC","bandrowC"]},
+      {id:"splitsquat", dir:"单腿蹲 · 腿 + 臀", def:"splitsquat", opts:["splitsquat","bssC","stepupC","lunge"]},
+      {id:"birddog", dir:"核心 · 抗旋转 + 负重行走", def:"birddog", opts:["birddog"]}
+    ]
+  }
+};
+
+const CARDIO = {
+  name:"有氧日", tag:"有氧",
+  slots:[
+    {id:"warm", dir:"热身", def:"warm", opts:["warm"]},
+    {id:"walk", dir:"有氧 · 低冲击", def:"walk", opts:["walk","elliptical","bike","rower","stair","swim","outdoor"]},
+    {id:"cool", dir:"放松", def:"cool", opts:["cool"]}
+  ]
+};
+
+const REST = {name:"休息日", tag:"休息", slots:[
+  {id:"stretch", dir:"恢复", def:"stretch", opts:["stretch"]}
+]};
+
+const WEEK_PLAN = {
+  1:{type:"A"}, 2:{type:"cardio"}, 3:{type:"B"}, 4:{type:"cardio"},
+  5:{type:"C"}, 6:{type:"optional"}, 0:{type:"rest"}
+};
+
+/* ---------- 阶段 ---------- */
+const PHASES = [
+  {name:"适应期", start:"2026-10-19", end:"2026-11-30", w:"6 周", weight:"102.4 → 99", fat:"34–35%", focus:"学动作、建习惯"},
+  {name:"减脂一期", start:"2026-12-01", end:"2027-01-31", w:"9 周", weight:"→ 94–95", fat:"31–32%", focus:"力量稳定、蛋白达标"},
+  {name:"减脂二期", start:"2027-02-01", end:"2027-04-30", w:"13 周", weight:"→ 89–90", fat:"28%", focus:"加有氧、管住外卖"},
+  {name:"减脂三期", start:"2027-05-01", end:"2027-07-31", w:"13 周", weight:"→ 84–85", fat:"24–25%", focus:"强度提升、突破平台"},
+  {name:"冲刺期", start:"2027-08-01", end:"2027-09-30", w:"9 周", weight:"→ 81–82", fat:"20–21%", focus:"精细调整、保住肌肉"},
+  {name:"维持期", start:"2027-10-01", end:"2027-12-31", w:"13 周", weight:"80–82", fat:"18–20%", focus:"巩固、防反弹"}
+];
+
+/* ---------- 菜单 ---------- */
+const MENU = [
+  {d:"周一", b:"燕麦 50g + 牛奶 250ml + 水煮蛋 2 个 + 苹果半个", l:"米饭 + 清蒸鸡 + 两份青菜", s:"无糖酸奶 + 坚果", dn:"杂粮饭半拳 + 番茄炒蛋 + 西兰花"},
+  {d:"周二", b:"全麦面包 2 片 + 煎蛋 2 个 + 无糖豆浆 300ml", l:"牛肉面（面减半、加青菜）", s:"香蕉 + 茶叶蛋", dn:"红薯 + 去皮鸡腿 + 凉拌黄瓜木耳"},
+  {d:"周三", b:"杂粮粥 + 水煮蛋 2 个 + 凉拌菠菜", l:"食堂：米饭 1 拳 + 去皮鸡腿 + 两份素菜", s:"酸奶 + 蓝莓", dn:"玉米 + 家常豆腐 + 青菜"},
+  {d:"周四", b:"玉米 + 水煮蛋 2 个 + 牛奶", l:"轻食沙拉（鸡胸 + 藜麦 + 蔬菜）", s:"苹果 + 坚果", dn:"杂粮饭半拳 + 虾仁炒蛋 + 蘑菇青菜"},
+  {d:"周五", b:"荞麦面 + 蛋 + 青菜", l:"米饭 + 番茄牛腩 + 时蔬", s:"酸奶 + 全麦面包", dn:"土豆 + 烤鸡腿（去皮）+ 生菜沙拉"},
+  {d:"周六", b:"酸奶 + 燕麦 + 香蕉", l:"清汤麻辣烫（不加鱼丸鱼豆腐）或日式定食", s:"茶叶蛋 + 黄瓜", dn:"米饭半拳 + 香菇滑鸡 + 西兰花"},
+  {d:"周日", b:"包子 + 豆浆 + 鸡蛋", l:"自由餐（七分饱，先菜后肉再主食）", s:"水果", dn:"豆腐蔬菜汤 + 白灼虾或鸡胸 + 少量主食"}
+];
+
+/* ---------- 采购 ---------- */
+const SHOP = {
+  sunday:{
+    title:"周日主采购", sub:"管周日–周三",
+    items:[
+      {c:"蛋白", n:"鸡蛋", a:"20 个", note:"煮 8 个当加餐"},
+      {c:"蛋白", n:"鸡胸肉", a:"400g", note:"周一、周日晚"},
+      {c:"蛋白", n:"鸡腿", a:"2 个", note:"周二晚 1 个，备用 1 个"},
+      {c:"蛋白", n:"北豆腐", a:"2 盒", note:"周三、周日晚"},
+      {c:"乳品", n:"无糖酸奶", a:"4 杯", note:"150g/杯"},
+      {c:"乳品", n:"牛奶", a:"1L", note:"食堂没奶时备用"},
+      {c:"主食", n:"红薯", a:"2 个", note:"周二晚"},
+      {c:"主食", n:"玉米", a:"2 根", note:"周三、周四"},
+      {c:"蔬菜", n:"西兰花", a:"1 颗", note:"周一"},
+      {c:"蔬菜", n:"青菜 / 菠菜", a:"800g", note:"每天一份"},
+      {c:"蔬菜", n:"番茄", a:"3 个", note:"炒蛋、汤"},
+      {c:"蔬菜", n:"黄瓜", a:"2 根", note:"凉拌"},
+      {c:"蔬菜", n:"胡萝卜 / 洋葱", a:"各 2 / 1 个", note:"耐放"},
+      {c:"蔬菜", n:"包菜", a:"半颗", note:"耐储备用"},
+      {c:"水果", n:"苹果 / 香蕉 / 蓝莓", a:"3 / 4 / 1 盒", note:"加餐与练前"},
+      {c:"坚果", n:"小包装坚果", a:"4 包", note:"每天 10g"}
+    ]
+  },
+  wednesday:{
+    title:"周三补货", sub:"管周四–周六，顺路 10 分钟",
+    items:[
+      {c:"蛋白", n:"鸡蛋", a:"10 个", note:"煮 6 个"},
+      {c:"蛋白", n:"鸡腿", a:"2 个", note:"周五、周六"},
+      {c:"蛋白", n:"牛腩 / 瘦牛肉", a:"300g", note:"周五午餐"},
+      {c:"蛋白", n:"虾仁", a:"200g", note:"周四；不吃虾换豆干"},
+      {c:"蛋白", n:"豆干 / 北豆腐", a:"200g / 1 盒", note:"备用蛋白"},
+      {c:"乳品", n:"无糖酸奶", a:"3 杯", note:"加餐"},
+      {c:"蔬菜", n:"蘑菇", a:"300g", note:"周四"},
+      {c:"蔬菜", n:"生菜", a:"1 颗", note:"周五沙拉"},
+      {c:"蔬菜", n:"西兰花", a:"1 颗", note:"周六"},
+      {c:"蔬菜", n:"青菜", a:"700g", note:"每天一份"},
+      {c:"蔬菜", n:"黄瓜 / 番茄", a:"2 根 / 2 个", note:"凉拌、炒蛋"},
+      {c:"水果", n:"苹果 / 香蕉 / 蓝莓", a:"2 / 2 / 1 盒", note:"加餐"},
+      {c:"坚果", n:"小包装坚果", a:"3 包", note:"每天 10g"}
+    ]
+  },
+  pantry:["燕麦片","杂粮米","大米","干木耳","干香菇","腐竹","粉丝","食用油","生抽","醋","盐","黑胡椒","蒜","姜"]
+};
+
+/* ---------- 计划页静态内容 ---------- */
+const PLAN = {
+  schedule:[
+    ["周一","力量 A：下肢 + 臀","55 分钟"],
+    ["周二","有氧：坡度快走 / 椭圆机","35 分钟"],
+    ["周三","力量 B：上肢 + 背","55 分钟"],
+    ["周四","有氧：坡度快走 / 椭圆机","35 分钟"],
+    ["周五","力量 C：后链 + 全身","55 分钟"],
+    ["周六","游泳 / 骑车 / 户外快走（可选）","40–50 分钟"],
+    ["周日","休息 + 拉伸","10 分钟"]
+  ],
+  progression:[
+    ["1–2 周","2 次/周","3 组","RPE 5","学动作，建立习惯"],
+    ["3–4 周","3 次/周","4 组","RPE 6–7","动作稳定，重量微增"],
+    ["5–8 周","3 次/周","4 组","RPE 7–8","每周加 2.5–5kg 或加 1–2 次"],
+    ["第 9 周","减载","组数减半","很轻","恢复 + 复测体成分"]
+  ],
+  avoid:"仰卧起坐、卷腹、仰卧举腿、两头起、俄罗斯转体、负重侧屈、站姿体前屈摸脚、直腿硬拉与大重量硬拉、早安式、深蹲跳、波比跳、跳绳、跑步（前 3 个月）、腿举放到最深、颈后下拉、站姿过头推举、大重量杠铃深蹲。",
+  cafRed:["水煮蛋、茶叶蛋、无糖豆浆、牛奶","小米粥、杂粮粥、菜包、全麦馒头","玉米、红薯、凉拌菜、清汤面加蛋加菜","白切鸡（去皮）、卤牛肉、清炒虾仁","蒸蛋、番茄炒蛋、豆腐、豆干","清炒 / 白灼时蔬、杂粮饭"],
+  cafBlack:["油条、油饼、煎饺、锅贴","炒粉、炒面、蛋糕、肉松面包","甜豆浆、加糖八宝粥","红烧肉、扣肉、糖醋里脊","炸鸡腿、炸排、回锅肉、干锅","水煮肉片、麻辣香锅、浓汤、菜汁拌饭"],
+  emergency:[
+    ["便利店","茶叶蛋 2 个 + 无糖酸奶 + 蔬菜沙拉 + 常温即食鸡胸"],
+    ["外卖","轻食沙拉（酱半份）、牛肉面加青菜、清汤麻辣烫、日式定食"],
+    ["应酬","先吃菜和蛋白，主食减半，酒 0–1 杯；第二天正常吃"],
+    ["蛋白不够","蛋白粉 1 勺兑牛奶，或再吃 2 个水煮蛋"]
+  ]
+};
+
+</script>
+<script>
+/* ---------- 动作教程：示意图 + 步骤 + 常见错误 ---------- */
+
+const FIGS = {
+  squat: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="18" y1="132" x2="202" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="106" cy="34" r="9" fill="#1E6B4F"/><path d="M106 44 L104 78" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M104 78 L86 102 L88 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M104 78 L126 102 L128 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M106 52 L98 66" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><rect x="87" y="61" width="24" height="12" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M64 66 C58 84 60 98 66 108" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5" fill="none"/><polygon points="61,113 66,104 71,113" fill="#D08A2C"/></svg>',
+
+  legpress: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><path d="M36 52 L58 92" stroke="#CBD6CB" stroke-width="13" stroke-linecap="round"/><rect x="48" y="92" width="48" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="168" y="36" width="10" height="90" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><circle cx="54" cy="44" r="9" fill="#1E6B4F"/><path d="M56 54 L72 90" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M72 90 L108 64 L150 74" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M150 74 L166 70" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M60 62 L50 82" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M182 58 L196 58" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="202,58 193,53 193,63" fill="#D08A2C"/></svg>',
+
+  split: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="132" x2="204" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="104" cy="32" r="9" fill="#1E6B4F"/><path d="M104 42 L102 76" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M102 76 L130 100 L134 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M102 76 L76 106 L54 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M104 50 L90 78" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M104 50 L120 78" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><rect x="80" y="74" width="16" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="116" y="74" width="16" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M166 74 C170 92 168 104 162 112" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5" fill="none"/><polygon points="159,117 162,107 168,115" fill="#D08A2C"/></svg>',
+
+  step: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="128" y="102" width="58" height="30" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><circle cx="86" cy="30" r="9" fill="#1E6B4F"/><path d="M86 40 L90 74" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M90 74 L116 88 L132 100" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M90 74 L84 102 L80 132" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M88 50 L74 72" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M88 50 L104 72" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M150 60 L150 42" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="150,36 145,45 155,45" fill="#D08A2C"/></svg>',
+
+  wall: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="164" y="16" width="10" height="116" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><circle cx="152" cy="46" r="9" fill="#1E6B4F"/><path d="M154 56 L154 88" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M154 88 L116 88 L116 132" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M154 64 L126 74" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M136 60 L136 48" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="136,42 131,51 141,51" fill="#D08A2C"/></svg>',
+
+  hipthrust: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="26" y="88" width="70" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="32" y="98" width="6" height="34" fill="#CBD6CB"/><rect x="84" y="98" width="6" height="34" fill="#CBD6CB"/><circle cx="44" cy="76" r="9" fill="#1E6B4F"/><path d="M54 80 L100 74" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M100 74 L128 72 L138 102" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M54 84 L72 90" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M96 52 L112 58" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="118,61 108,56 110,66" fill="#D08A2C"/></svg>',
+
+  bridge: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="132" x2="204" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="38" cy="118" r="9" fill="#1E6B4F"/><path d="M50 120 L96 96" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M96 96 L118 106 L124 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M52 122 L74 128" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M100 78 L100 64" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="100,58 95,67 105,67" fill="#D08A2C"/></svg>',
+
+  standinghip: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="132" x2="204" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="100" cy="30" r="9" fill="#1E6B4F"/><path d="M100 40 L98 80" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M98 80 L96 106 L94 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M98 80 L66 94" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M100 50 L120 58" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><rect x="118" y="50" width="8" height="42" rx="3" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M18 96 L58 96" stroke="#93A692" stroke-width="2.5" stroke-dasharray="5 4"/><path d="M34 102 L22 96 L34 90" stroke="#D08A2C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+  legcurl: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="58" y="96" width="94" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="64" y="105" width="6" height="28" fill="#CBD6CB"/><rect x="138" y="105" width="6" height="28" fill="#CBD6CB"/><circle cx="50" cy="86" r="9" fill="#1E6B4F"/><path d="M62 90 L140 90" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M140 90 L126 68" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><circle cx="124" cy="64" r="7" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M160 74 C168 66 170 58 166 50" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5" fill="none"/><polygon points="163,45 162,55 171,51" fill="#D08A2C"/></svg>',
+
+  press: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="44" y="96" width="92" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="52" y="105" width="6" height="28" fill="#CBD6CB"/><rect x="120" y="105" width="6" height="28" fill="#CBD6CB"/><circle cx="34" cy="84" r="9" fill="#1E6B4F"/><path d="M44 88 L122 88" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M60 86 L64 58" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M100 86 L104 58" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><rect x="54" y="48" width="22" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="94" y="48" width="22" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M122 88 L150 104 L152 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M78 34 L78 24" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="78,18 73,27 83,27" fill="#D08A2C"/></svg>',
+
+  pushup: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="66" r="9" fill="#1E6B4F"/><path d="M64 72 L124 90" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M64 74 L64 130" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M124 90 L156 106 L182 128" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M90 62 L90 50" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="90,44 85,53 95,53" fill="#D08A2C"/></svg>',
+
+  pulldown: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="120" y="14" width="8" height="12" rx="3" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M124 26 L124 44" stroke="#93A692" stroke-width="3"/><rect x="94" y="42" width="60" height="7" rx="3.5" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><circle cx="114" cy="66" r="9" fill="#1E6B4F"/><path d="M114 76 L114 106" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M108 84 L98 56" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M120 84 L130 56" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><rect x="88" y="106" width="54" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M114 106 L142 100 L152 124" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M124 60 L124 72" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="124,78 119,69 129,69" fill="#D08A2C"/></svg>',
+
+  row: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="62" y="100" width="58" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="70" y="109" width="6" height="24" fill="#CBD6CB"/><circle cx="88" cy="58" r="9" fill="#1E6B4F"/><path d="M88 68 L88 98" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M88 98 L120 96 L140 124" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M90 78 L112 82" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M186 84 L116 82" stroke="#93A692" stroke-width="2.5" stroke-dasharray="5 4"/><path d="M150 88 L138 82 L150 76" stroke="#D08A2C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+  core: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="132" x2="204" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="116" r="9" fill="#1E6B4F"/><path d="M52 118 L104 118" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M58 118 L54 88" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M66 118 L62 96" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round" opacity=".32"/><path d="M104 118 L124 94 L148 86" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M104 118 L120 102 L142 96" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".32"/><path d="M166 92 L184 84" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="190,81 180,80 184,89" fill="#D08A2C"/></svg>',
+
+  cardio: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="14" y1="128" x2="206" y2="128" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><path d="M44 128 L176 116" stroke="#93A692" stroke-width="8" stroke-linecap="round"/><circle cx="46" cy="126" r="7" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><circle cx="174" cy="114" r="7" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="160" y="60" width="8" height="58" rx="3" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><circle cx="106" cy="46" r="9" fill="#1E6B4F"/><path d="M106 56 L108 86" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M108 86 L92 108 L88 126" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M108 86 L128 106 L134 122" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M104 64 L84 74" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M110 64 L130 54" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M64 40 L64 28" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="64,22 59,31 69,31" fill="#D08A2C"/></svg>'
+};
+
+/* 动作 → 教程主题 */
+const TUT_OF = {
+  legpress: "legpress", hack: "squat",
+  smithsquat: "squat", goblet: "squat",
+  bss: "split", bssC: "split", splitsquat: "split", lunge: "split",
+  stepup: "step", stepupC: "step",
+  wall: "wall",
+  hipthrust: "hipthrust", hipthrustW: "hipthrust",
+  glutebridge: "bridge", glutebridgeW: "bridge",
+  cablehip: "standinghip", cablehip2: "standinghip", bandhip: "standinghip", bandhip2: "standinghip",
+  legcurl: "legcurl", bandcurl: "legcurl",
+  nordic: "nordic", slider: "nordic",
+  chestpress: "press", dumbbellpress: "press", smithpress: "press", pecdeck: "press",
+  pushup: "pushup",
+  pulldown: "pulldown", assistedpull: "pulldown", bandpull: "pulldown", straightarm: "pulldown",
+  row: "row", chestrow: "row", cablerow: "row", cablerowC: "row", rowChest: "row",
+  dbrow: "onearmrow", dbrowC: "onearmrow",
+  bandrow: "row", bandrowC: "row",
+  deadbugA: "core", deadbugB: "pallof", birddog: "core",
+  walk: "cardio", elliptical: "cardio", bike: "cardio", rower: "cardio", stair: "cardio", swim: "cardio", outdoor: "cardio",
+  stretch: "stretch"
+};
+
+const TECH = {
+  squat: {
+    title: "深蹲（下肢推）", fig: "squat",
+    steps: [
+      "双脚与肩同宽，脚尖略外八，重心放在脚掌中后部。",
+      "吸气，屁股先向后、再向下坐，膝盖顺着脚尖方向走。",
+      "蹲到大腿接近平行（或你能控制的最低点），停半秒。",
+      "呼气，脚掌踩实站起，站直时膝盖不要锁死。"
+    ],
+    errs: ["膝盖内扣或左右晃", "弯腰弓背、脚跟离地", "为了蹲深而塌腰"],
+    breath: "下蹲吸气、站起呼气；全程肚子绷紧，像被人轻推一拳也不塌。",
+    safe: "腰椎滑脱：先做半程、用轻重量，腰部有不适立即停；不要为了蹲深而塌腰。"
+  },
+  legpress: {
+    title: "腿举（下肢推·固定器械）", fig: "legpress",
+    steps: [
+      "坐好，背和臀贴紧靠垫，双脚与肩同宽踩在踏板中部。",
+      "吸气，缓慢下放到大腿约 90°，在臀部即将离开靠垫前停住。",
+      "呼气蹬起，膝盖保持微屈，不要完全锁死。"
+    ],
+    errs: ["下放太深，腰离开靠垫", "膝盖内扣", "用爆发力弹起"],
+    breath: "下放吸气、蹬起呼气，全程腰贴垫。",
+    safe: "下放别过深：臀部一旦要离开靠垫就停，腰离垫是腰椎最危险的瞬间。"
+  },
+  split: {
+    title: "分腿蹲 / 箭步蹲（单腿）", fig: "split",
+    steps: [
+      "前后站开一大步，重心放在两脚之间。",
+      "下蹲，前腿大腿接近平行，后膝接近地面。",
+      "前脚掌发力站起，上身保持直立，不要前扑。"
+    ],
+    errs: ["前膝内扣或超过脚尖太多", "上身过度前倾", "步幅太小，膝盖压力大"],
+    breath: "下蹲吸气、站起呼气；扶着固定物会更稳。"
+  },
+  step: {
+    title: "台阶上步（单腿）", fig: "step",
+    steps: [
+      "一只脚全脚掌踩上 10–15cm 的台阶。",
+      "用台阶上的那条腿发力站起，后腿只做辅助、不蹬地。",
+      "慢慢下放，控制落地，换边。"
+    ],
+    errs: ["后腿蹬地借力", "膝盖内扣", "下放时砸地"],
+    breath: "上步呼气、下放吸气。"
+  },
+  wall: {
+    title: "靠墙静蹲（无器械）", fig: "wall",
+    steps: [
+      "背贴墙站好，双脚向前迈约一步。",
+      "沿墙下滑，到大腿接近平行、膝盖约 90°。",
+      "保持 30–45 秒，腰始终贴墙。"
+    ],
+    errs: ["膝盖超过脚尖太多", "腰离开墙", "憋气"],
+    breath: "自然呼吸，别憋气；撑不住就升高一点。"
+  },
+  hipthrust: {
+    title: "髋推（臀）", fig: "hipthrust",
+    steps: [
+      "肩胛骨下缘靠在凳边，双脚与髋同宽，脚跟发力。",
+      "顶起髋部，到躯干与大腿成一条直线，夹臀 2 秒。",
+      "慢慢下放，不要用腰去顶。"
+    ],
+    errs: ["顶端过度挺腰", "脚放太远，变成腿后侧代偿", "下巴抬太高"],
+    breath: "顶起呼气、下放吸气。"
+  },
+  bridge: {
+    title: "臀桥（臀）", fig: "bridge",
+    steps: [
+      "仰卧屈膝，脚跟距离臀部约一掌。",
+      "脚跟发力顶髋，肩到膝成一条直线。",
+      "顶端夹臀 2 秒，再慢慢放下。"
+    ],
+    errs: ["用腰顶而不是臀", "膝盖外翻", "脖子用力"],
+    breath: "顶起呼气、下放吸气。"
+  },
+  standinghip: {
+    title: "站姿髋伸（臀）", fig: "standinghip",
+    steps: [
+      "脚踝绑带或套弹力带，扶稳固定物，身体略前倾。",
+      "腿向后伸，膝盖微屈，用臀发力。",
+      "控制回位，不要靠腰后仰。"
+    ],
+    errs: ["腰代偿后仰", "幅度过大", "速度太快"],
+    breath: "后伸呼气、回位吸气。"
+  },
+  legcurl: {
+    title: "腿弯举（腿后侧）", fig: "legcurl",
+    steps: [
+      "调整器械，膝盖对准转轴，脚踝垫好。",
+      "勾腿到最大幅度，停 1 秒。",
+      "慢放 3 秒，不要让重量砸回去。"
+    ],
+    errs: ["用惯性甩", "臀部抬起", "幅度只做一半"],
+    breath: "勾腿呼气、下放吸气。"
+  },
+  nordic: {
+    title: "北欧挺 / 滑盘腿弯举（腿后侧）", fig: "nordicstill",
+    steps: [
+      "跪姿固定脚踝（或脚踩滑盘），身体从膝盖开始前倾。",
+      "用腿后侧控制下放，越慢越好。",
+      "手撑地缓冲，再用手推回起始位。"
+    ],
+    errs: ["塌腰", "下放过快", "只做半程"],
+    breath: "下放吸气、回位呼气；做不到就退回腿弯举。"
+  },
+  press: {
+    title: "推胸（胸 + 三头）", fig: "press",
+    steps: [
+      "躺或坐稳，肩胛骨向后向下收。",
+      "下放到胸口两侧，肘约 45°，不耸肩。",
+      "推起，肘不锁死，手腕保持中立。"
+    ],
+    errs: ["耸肩", "手腕向后折", "下放过深拉扯肩"],
+    breath: "下放吸气、推起呼气。"
+  },
+  pushup: {
+    title: "俯卧撑（胸 + 核心）", fig: "pushup",
+    steps: [
+      "手比肩略宽，身体从头到脚成一条线。",
+      "下放到胸口接近地面，肘约 45°。",
+      "推起，肚子和屁股同时收紧。"
+    ],
+    errs: ["塌腰或翘臀", "头往前伸", "幅度太小"],
+    breath: "下放吸气、推起呼气；做不动就跪姿或手撑高。"
+  },
+  pulldown: {
+    title: "下拉 / 引体（背）", fig: "pulldown",
+    steps: [
+      "握距略宽于肩，先沉肩胛。",
+      "拉到锁骨附近，肘向下向后走。",
+      "控制回位，身体不要后仰甩。"
+    ],
+    errs: ["用身体后仰借力", "耸肩", "拉到颈后"],
+    breath: "下拉呼气、回位吸气。"
+  },
+  row: {
+    title: "划船（中背）", fig: "row",
+    steps: [
+      "坐稳或站直，腰背挺直，胸口贴垫更稳。",
+      "肩胛后收，肘贴身向后拉。",
+      "停 1 秒，慢放回起始位。"
+    ],
+    errs: ["弓背", "耸肩", "只用手臂拉，背部没发力"],
+    breath: "后拉呼气、回位吸气。"
+  },
+  onearmrow: {
+    title: "单臂哑铃划船（中背）", fig: "row",
+    steps: [
+      "一手一膝撑凳，背保持平直。",
+      "哑铃向髋部方向拉，肘贴身。",
+      "慢放，身体不扭转。"
+    ],
+    errs: ["身体旋转借力", "耸肩", "拉向胸口而不是髋部"],
+    breath: "拉起呼气、下放吸气。"
+  },
+  core: {
+    title: "核心：死虫 / 鸟狗 / 平板", fig: "core",
+    steps: [
+      "仰卧，腰贴地，手脚抬起（死虫）；或四点跪姿（鸟狗）。",
+      "对侧手脚缓慢伸出，腰不离地、骨盆不晃。",
+      "收回，换边；全程呼气收腹。"
+    ],
+    errs: ["腰拱起离地", "速度太快", "憋气"],
+    breath: "伸出时呼气，收回时吸气；宁慢勿快。"
+  },
+  pallof: {
+    title: "Pallof 抗旋转（核心）", fig: "pallofstill",
+    steps: [
+      "侧对锚点，双手握把放在胸前。",
+      "对抗旋转，把把手向前推出再收回。",
+      "骨盆和肩膀始终正对前方。"
+    ],
+    errs: ["身体被带转", "耸肩", "憋气"],
+    breath: "推出呼气、收回吸气。"
+  },
+  cardio: {
+    title: "有氧（低冲击）", fig: "cardio",
+    steps: [
+      "选跑步机 / 椭圆机 / 单车等低冲击器械，先慢 5 分钟。",
+      "保持心率 110–130（能说话但略喘），做 25–30 分钟。",
+      "结束前降速 3 分钟，不要突然停下。"
+    ],
+    errs: ["一上来就冲", "全程死扶把手", "突然停下"],
+    breath: "自然呼吸，能说短句为准。"
+  },
+  stretch: {
+    title: "拉伸（恢复）", fig: "stretchstill",
+    steps: [
+      "每个动作保持 30 秒，不要弹震。",
+      "拉到轻微牵拉感即可，不追求疼。",
+      "配合缓慢呼吸，别憋气。"
+    ],
+    errs: ["弹震式拉伸", "拉到疼", "憋气"],
+    breath: "吸气准备，呼气时放松一点。"
+  }
+};
+
+</script>
+<script>
+/* ---------- 动态示意（点开自动播放，点图暂停） ---------- */
+const A_DUR = "2.8s";
+const A_EASE = 'keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1" repeatCount="indefinite"';
+
+const FIGS_ANIM = {
+  squat: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="18" y1="132" x2="202" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="106" cy="34" r="9" fill="#1E6B4F"><animate attributeName="cy" values="34;48;34" dur="' + A_DUR + '" ' + A_EASE + '/></circle><path d="M106 44 L104 78" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" fill="none"><animate attributeName="d" values="M106 44 L104 78;M106 58 L104 92;M106 44 L104 78" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M104 78 L86 102 L88 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M104 78 L86 102 L88 130;M104 92 L78 110 L88 130;M104 78 L86 102 L88 130" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M104 78 L126 102 L128 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M104 78 L126 102 L128 130;M104 92 L130 110 L128 130;M104 78 L126 102 L128 130" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M106 52 L98 66" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M106 52 L98 66;M106 66 L98 80;M106 52 L98 66" dur="' + A_DUR + '" ' + A_EASE + '/></path><rect x="87" y="61" width="24" height="12" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"><animateTransform attributeName="transform" type="translate" values="0 0;0 14;0 0" dur="' + A_DUR + '" ' + A_EASE + '/></rect><path d="M64 66 C58 84 60 98 66 108" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5" fill="none"/><polygon points="61,113 66,104 71,113" fill="#D08A2C"/></svg>',
+
+  legpress: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><path d="M36 52 L58 92" stroke="#CBD6CB" stroke-width="13" stroke-linecap="round"/><rect x="48" y="92" width="48" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="168" y="36" width="10" height="90" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><circle cx="54" cy="44" r="9" fill="#1E6B4F"/><path d="M56 54 L72 90" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M72 90 L108 64 L150 74" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M72 90 L108 64 L150 74;M72 90 L124 78 L160 72;M72 90 L108 64 L150 74" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M150 74 L166 70" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M150 74 L166 70;M160 72 L170 70;M150 74 L166 70" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M60 62 L50 82" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M182 58 L196 58" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="202,58 193,53 193,63" fill="#D08A2C"/></svg>',
+
+  split: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="132" x2="204" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="104" cy="32" r="9" fill="#1E6B4F"><animate attributeName="cy" values="32;46;32" dur="' + A_DUR + '" ' + A_EASE + '/></circle><path d="M104 42 L102 76" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"><animate attributeName="d" values="M104 42 L102 76;M104 56 L102 90;M104 42 L102 76" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M102 76 L130 100 L134 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M102 76 L130 100 L134 130;M102 90 L136 104 L136 130;M102 76 L130 100 L134 130" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M102 76 L76 106 L54 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M102 76 L76 106 L54 130;M102 90 L72 116 L54 130;M102 76 L76 106 L54 130" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M104 50 L90 78" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M104 50 L90 78;M104 64 L90 92;M104 50 L90 78" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M104 50 L120 78" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M104 50 L120 78;M104 64 L120 92;M104 50 L120 78" dur="' + A_DUR + '" ' + A_EASE + '/></path><rect x="80" y="74" width="16" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"><animateTransform attributeName="transform" type="translate" values="0 0;0 14;0 0" dur="' + A_DUR + '" ' + A_EASE + '/></rect><rect x="116" y="74" width="16" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"><animateTransform attributeName="transform" type="translate" values="0 0;0 14;0 0" dur="' + A_DUR + '" ' + A_EASE + '/></rect><path d="M166 74 C170 92 168 104 162 112" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5" fill="none"/><polygon points="159,117 162,107 168,115" fill="#D08A2C"/></svg>',
+
+  hipthrust: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="26" y="88" width="70" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="32" y="98" width="6" height="34" fill="#CBD6CB"/><rect x="84" y="98" width="6" height="34" fill="#CBD6CB"/><circle cx="44" cy="76" r="9" fill="#1E6B4F"/><path d="M54 80 L100 74" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"><animate attributeName="d" values="M54 80 L100 74;M54 84 L98 86;M54 80 L100 74" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M100 74 L128 72 L138 102" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M100 74 L128 72 L138 102;M98 86 L126 86 L136 108;M100 74 L128 72 L138 102" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M54 84 L72 90" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"/><path d="M96 52 L112 58" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="118,61 108,56 110,66" fill="#D08A2C"/></svg>',
+
+  press: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="44" y="96" width="92" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="52" y="105" width="6" height="28" fill="#CBD6CB"/><rect x="120" y="105" width="6" height="28" fill="#CBD6CB"/><circle cx="34" cy="84" r="9" fill="#1E6B4F"/><path d="M44 88 L122 88" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M60 86 L64 58" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M60 86 L64 58;M60 86 L58 74;M60 86 L64 58" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M100 86 L104 58" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M100 86 L104 58;M100 86 L98 74;M100 86 L104 58" dur="' + A_DUR + '" ' + A_EASE + '/></path><rect x="54" y="48" width="22" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"><animateTransform attributeName="transform" type="translate" values="0 0;0 16;0 0" dur="' + A_DUR + '" ' + A_EASE + '/></rect><rect x="94" y="48" width="22" height="10" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"><animateTransform attributeName="transform" type="translate" values="0 0;0 16;0 0" dur="' + A_DUR + '" ' + A_EASE + '/></rect><path d="M122 88 L150 104 L152 130" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M78 34 L78 24" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="78,18 73,27 83,27" fill="#D08A2C"/></svg>',
+
+  pulldown: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="120" y="14" width="8" height="12" rx="3" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M124 26 L124 44" stroke="#93A692" stroke-width="3"><animate attributeName="d" values="M124 26 L124 44;M124 26 L124 64;M124 26 L124 44" dur="' + A_DUR + '" ' + A_EASE + '/></path><rect x="94" y="42" width="60" height="7" rx="3.5" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"><animateTransform attributeName="transform" type="translate" values="0 0;0 20;0 0" dur="' + A_DUR + '" ' + A_EASE + '/></rect><circle cx="114" cy="66" r="9" fill="#1E6B4F"/><path d="M114 76 L114 106" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M108 84 L98 56" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M108 84 L98 56;M108 84 L96 70;M108 84 L98 56" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M120 84 L130 56" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M120 84 L130 56;M120 84 L132 70;M120 84 L130 56" dur="' + A_DUR + '" ' + A_EASE + '/></path><rect x="88" y="106" width="54" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><path d="M114 106 L142 100 L152 124" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M124 60 L124 72" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="124,78 119,69 129,69" fill="#D08A2C"/></svg>',
+
+  row: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="62" y="100" width="58" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="70" y="109" width="6" height="24" fill="#CBD6CB"/><circle cx="88" cy="58" r="9" fill="#1E6B4F"/><path d="M88 68 L88 98" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M88 98 L120 96 L140 124" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M90 78 L112 82" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M90 78 L112 82;M90 78 L102 86;M90 78 L112 82" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M186 84 L116 82" stroke="#93A692" stroke-width="2.5" stroke-dasharray="5 4"><animate attributeName="d" values="M186 84 L116 82;M186 84 L106 86;M186 84 L116 82" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M150 88 L138 82 L150 76" stroke="#D08A2C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+  pushup: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="66" r="9" fill="#1E6B4F"><animate attributeName="cy" values="66;80;66" dur="' + A_DUR + '" ' + A_EASE + '/></circle><path d="M64 72 L124 90" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"><animate attributeName="d" values="M64 72 L124 90;M64 86 L124 100;M64 72 L124 90" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M64 74 L64 130" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M64 74 L64 130;M64 86 L58 130;M64 74 L64 130" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M124 90 L156 106 L182 128" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M124 90 L156 106 L182 128;M124 100 L156 112 L182 128;M124 90 L156 106 L182 128" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M90 62 L90 50" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="90,44 85,53 95,53" fill="#D08A2C"/></svg>',
+
+  legcurl: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="134" x2="204" y2="134" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><rect x="58" y="96" width="94" height="9" rx="4" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"/><rect x="64" y="105" width="6" height="28" fill="#CBD6CB"/><rect x="138" y="105" width="6" height="28" fill="#CBD6CB"/><circle cx="50" cy="86" r="9" fill="#1E6B4F"/><path d="M62 90 L140 90" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M140 90 L126 68" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"><animate attributeName="d" values="M140 90 L126 68;M140 90 L164 86;M140 90 L126 68" dur="' + A_DUR + '" ' + A_EASE + '/></path><circle cx="124" cy="64" r="7" fill="#CBD6CB" stroke="#93A692" stroke-width="2.5"><animateTransform attributeName="transform" type="translate" values="0 0;40 22;0 0" dur="' + A_DUR + '" ' + A_EASE + '/></circle><path d="M160 74 C168 66 170 58 166 50" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5" fill="none"/><polygon points="163,45 162,55 171,51" fill="#D08A2C"/></svg>',
+
+  core: '<svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="150" rx="14" fill="#F1F6F2"/><line x1="16" y1="132" x2="204" y2="132" stroke="#D8DFD6" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="116" r="9" fill="#1E6B4F"/><path d="M52 118 L104 118" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round"/><path d="M58 118 L54 88" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round"><animate attributeName="d" values="M58 118 L54 88;M58 118 L24 112;M58 118 L54 88" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M66 118 L62 96" stroke="#1E6B4F" stroke-width="8" stroke-linecap="round" opacity=".32"/><path d="M104 118 L124 94 L148 86" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><animate attributeName="d" values="M104 118 L124 94 L148 86;M104 118 L140 118 L162 124;M104 118 L124 94 L148 86" dur="' + A_DUR + '" ' + A_EASE + '/></path><path d="M104 118 L120 102 L142 96" stroke="#1E6B4F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".32"/><path d="M166 92 L184 84" stroke="#D08A2C" stroke-width="3" stroke-dasharray="6 5"/><polygon points="190,81 180,80 184,89" fill="#D08A2C"/></svg>'
+};
+
+FIGS.nordicstill = FIGS.legcurl;
+FIGS.pallofstill = FIGS.core;
+FIGS.stretchstill = FIGS.core;
+
+
+</script>
+<script>
+/* ================= 体成分计划 · 交互版 ================= */
+(function () {
+  "use strict";
+
+  var KEY = "bcplan.v1";
+  var START = "2026-10-19";
+  var MEALS = [
+    { k: "breakfast", n: "早餐", t: "07:30", target: 500 },
+    { k: "lunch", n: "午餐", t: "12:00", target: 700 },
+    { k: "snack", n: "加餐", t: "17:00", target: 200 },
+    { k: "dinner", n: "晚餐", t: "19:30", target: 500 }
+  ];
+  var STATUS = { done: "完成", part: "部分", none: "未完成" };
+  var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  var S = load();
+  var ui = {
+    tab: "today",
+    date: todayStr(),
+    cal: null,
+    subtab: "calendar",
+    weekStart: weekStart(todayStr() < START ? START : todayStr()),
+    sumMonth: (function () {
+      var a = todayStr() < START ? START : todayStr();
+      return { y: parseInt(a.slice(0, 4), 10), m: parseInt(a.slice(5, 7), 10) - 1 };
+    })(),
+    tutOpen: null,
+    tutFilter: "all",
+    tutQ: "",
+    modal: null,
+    toastT: null
+  };
+  ui.cal = { y: parseInt(ui.date.slice(0, 4), 10), m: parseInt(ui.date.slice(5, 7), 10) - 1 };
+
+  /* ---------------- 基础工具 ---------------- */
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function todayStr() { return ymd(new Date()); }
+  function parseYmd(s) {
+    var a = s.split("-").map(Number);
+    return new Date(a[0], a[1] - 1, a[2], 12, 0, 0);
+  }
+  function addDays(s, n) {
+    var d = parseYmd(s);
+    d.setDate(d.getDate() + n);
+    return ymd(d);
+  }
+  function wd(s) { return parseYmd(s).getDay(); }
+  function dayDiff(a, b) { return Math.round((parseYmd(b) - parseYmd(a)) / 86400000); }
+  function uid() { return Math.random().toString(36).slice(2, 9); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function round(n) { return Math.round(n || 0); }
+  function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
+
+  var WD_CN = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+
+  /* ---------------- 状态 ---------------- */
+  function defaultState() {
+    return {
+      version: 1,
+      settings: { kcal: 2050, protein: 130, startWeight: 102.4, goalWeight: 81.5, startDate: START },
+      days: {},
+      customFoods: [],
+      body: {},
+      reviews: {},
+      prefs: {},
+      shop: { week: "", checked: {} },
+      lastExport: null
+    };
+  }
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return defaultState();
+      var o = JSON.parse(raw);
+      var d = defaultState();
+      o.settings = Object.assign(d.settings, o.settings || {});
+      if (o.settings.startDate === "2026-10-17") o.settings.startDate = START;
+      o.days = o.days || {};
+      o.customFoods = o.customFoods || [];
+      o.body = o.body || {};
+      o.reviews = o.reviews || {};
+      o.prefs = o.prefs || {};
+      o.shop = o.shop || { week: "", checked: {} };
+      return o;
+    } catch (e) {
+      return defaultState();
+    }
+  }
+  var saveTimer = null;
+  function save() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(flush, 120);
+  }
+  function flush() {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast("保存失败：浏览器存储空间不足"); }
+  }
+
+  function emptyDay() {
+    return {
+      train: {},
+      meals: { breakfast: [], lunch: [], snack: [], dinner: [] },
+      water: 0, sleep: null, steps: null, note: ""
+    };
+  }
+  function getDay(k) { return S.days[k] || emptyDay(); }
+  function ensureDay(k) { if (!S.days[k]) S.days[k] = emptyDay(); return S.days[k]; }
+
+  /* ---------------- 计划 ---------------- */
+  function planFor(dateStr) {
+    var p = WEEK_PLAN[wd(dateStr)];
+    if (p.type === "A" || p.type === "B" || p.type === "C") {
+      var t = TRAIN[p.type];
+      return {
+        kind: p.type, name: t.name, tag: t.tag,
+        slots: [{ id: "warmup", dir: "热身", def: "warmup", opts: ["warmup"] }].concat(t.slots)
+      };
+    }
+    if (p.type === "cardio") return { kind: "cardio", name: CARDIO.name, tag: CARDIO.tag, slots: CARDIO.slots };
+    if (p.type === "optional") return {
+      kind: "optional", name: "可选有氧", tag: "可选",
+      slots: [{ id: "optional", dir: "有氧 · 任选一项", def: "walk", opts: ["walk", "elliptical", "bike", "outdoor", "swim"] }]
+    };
+    return { kind: "rest", name: "休息日", tag: "休息", slots: REST.slots };
+  }
+
+  function allSlots() {
+    var arr = [];
+    ["A", "B", "C"].forEach(function (k) {
+      TRAIN[k].slots.forEach(function (s) { arr.push(s); });
+    });
+    CARDIO.slots.forEach(function (s) { arr.push(s); });
+    arr.push({ id: "optional", dir: "有氧 · 任选一项", def: "walk", opts: ["walk", "elliptical", "bike", "outdoor", "swim"] });
+    return arr;
+  }
+  function findSlot(id) {
+    return allSlots().filter(function (s) { return s.id === id; })[0];
+  }
+  function exFor(slot, dateStr) {
+    var rec = (S.days[dateStr] && S.days[dateStr].train[slot.id]) || {};
+    var exId = rec.ex || S.prefs[slot.id] || slot.def;
+    return { id: exId, ex: EX[exId] || EX[slot.def], custom: !!(rec.ex || S.prefs[slot.id]) };
+  }
+
+  function trainStats(dateStr) {
+    var plan = planFor(dateStr);
+    var d = S.days[dateStr];
+    var done = 0, total = plan.slots.length, any = false;
+    plan.slots.forEach(function (item) {
+      var r = d && d.train[item.id];
+      if (!r || !r.v || r.v === "none") return;
+      any = true;
+      done += r.v === "done" ? 1 : 0.5;
+    });
+    return { done: done, total: total, pct: total ? done / total : 0, any: any };
+  }
+
+  function dayStatus(k) {
+    var d = S.days[k];
+    if (!d) return "";
+    var st = trainStats(k);
+    if (st.any) return st.pct >= 0.999 ? "done" : "part";
+    var food = MEALS.some(function (m) { return (d.meals[m.k] || []).length; });
+    if (food || d.water || d.sleep || d.steps || d.note) return "none";
+    return "";
+  }
+
+  function phaseFor(dateStr) {
+    for (var i = 0; i < PHASES.length; i++) {
+      if (dateStr >= PHASES[i].start && dateStr <= PHASES[i].end) return PHASES[i];
+    }
+    return null;
+  }
+  function weekIndex(dateStr) {
+    var n = dayDiff(S.settings.startDate || START, dateStr);
+    return n < 0 ? 0 : Math.floor(n / 7) + 1;
+  }
+
+  function mealTotals(d, key) {
+    var arr = (d.meals && d.meals[key]) || [];
+    return {
+      k: sum(arr.map(function (x) { return x.k; })),
+      p: sum(arr.map(function (x) { return x.p; }))
+    };
+  }
+  function dayTotals(d) {
+    var k = 0, p = 0;
+    MEALS.forEach(function (m) {
+      var t = mealTotals(d, m.k);
+      k += t.k; p += t.p;
+    });
+    return { k: k, p: p };
+  }
+
+  /* ---------------- 通用片段 ---------------- */
+  function hero(dateStr) {
+    var plan = planFor(dateStr);
+    var st = trainStats(dateStr);
+    var d = getDay(dateStr);
+    var tot = dayTotals(d);
+    var ph = phaseFor(dateStr);
+    var wk = weekIndex(dateStr);
+    var startDate = S.settings.startDate || START;
+    var pre = dateStr < startDate;
+    var meta = pre
+      ? "开营前 · " + startDate.slice(5).replace("-", "/") + " 开始"
+      : (wk ? "第 " + wk + " 周 · " : "") + (ph ? ph.name : "周期外");
+    var dt = parseYmd(dateStr);
+    var kcalPct = Math.min(100, Math.round(tot.k / S.settings.kcal * 100));
+    return '' +
+      '<section class="hero">' +
+        '<div class="hero-top">' +
+          '<div>' +
+            '<div class="hero-date">' + (dt.getMonth() + 1) + '月' + dt.getDate() + '日 · ' + WD_CN[dt.getDay()] + '</div>' +
+            '<div class="hero-meta">' + meta + ' · ' + plan.tag + '</div>' +
+          '</div>' +
+          '<div class="hero-badge">' + plan.name + '</div>' +
+        '</div>' +
+        '<div class="hero-stats">' +
+          '<div class="hstat"><div class="v">' + fmtNum(st.done) + '<span>/' + st.total + '</span></div><div class="k">训练完成</div></div>' +
+          '<div class="hstat"><div class="v">' + round(tot.k) + '<span>kcal</span></div><div class="k">已摄入 / ' + S.settings.kcal + '</div></div>' +
+          '<div class="hstat"><div class="v">' + round(tot.p) + '<span>g</span></div><div class="k">蛋白 / ' + S.settings.protein + 'g</div></div>' +
+        '</div>' +
+        '<div class="hero-bar"><i style="width:' + kcalPct + '%"></i></div>' +
+      '</section>';
+  }
+  function fmtNum(n) { return n % 1 === 0 ? String(n) : n.toFixed(1); }
+
+  function seg(act, id, val) {
+    var opts = [["done", "完成"], ["part", "部分"], ["none", "未完成"]];
+    var cur = val || "none";
+    return '<div class="seg">' + opts.map(function (o) {
+      return '<button data-act="' + act + '" data-id="' + id + '" data-v="' + o[0] + '" class="' + (cur === o[0] ? "on" : "") + '">' + o[1] + '</button>';
+    }).join("") + '</div>';
+  }
+
+  /* ---------------- 今日 ---------------- */
+  function viewToday() {
+    var dateStr = ui.date;
+    var plan = planFor(dateStr);
+    var d = getDay(dateStr);
+    var st = trainStats(dateStr);
+    var tot = dayTotals(d);
+    var durMap = { A: "约 55 分钟", B: "约 55 分钟", C: "约 55 分钟", cardio: "约 35 分钟", optional: "40–50 分钟（可选）", rest: "10 分钟拉伸" };
+
+    var trainCard = '<section class="card">' +
+      '<div class="card-h"><div><div class="card-title">今日训练</div>' +
+      '<div class="card-sub">' + plan.name + ' · ' + (durMap[plan.kind] || "约 55 分钟") + '</div></div>' +
+      '<div class="tag">' + Math.round(st.pct * 100) + '%</div></div>' +
+      plan.slots.map(function (slot) {
+        var r = d.train[slot.id] || {};
+        var cur = exFor(slot, dateStr);
+        return '<div class="ex">' +
+          '<div class="ex-top">' +
+            '<div style="flex:1;min-width:0">' +
+              '<div class="exdir">' + esc(slot.dir) + (cur.ex.eq && cur.ex.eq !== "—" ? '<span class="eqtag">' + esc(cur.ex.eq) + '</span>' : '') + '</div>' +
+              '<div class="ex-name">' + esc(cur.ex.n) + '<em>' + esc(cur.ex.s) + '</em></div>' +
+              '<div class="ex-tip">' + esc(cur.ex.tip || "") + '</div>' +
+            '</div>' +
+            (slot.opts.length > 1 ? '<button class="swap" data-act="swap" data-slot="' + slot.id + '">换</button>' : '') +
+          '</div>' +
+          '<div style="margin-top:8px">' + seg("status", slot.id, r.v) + '</div>' +
+          (plan.kind === "rest" ? "" :
+            '<div class="ex-meta">' +
+              '<input data-bind="ex" data-id="' + slot.id + '" data-f="w" value="' + esc(r.w || "") + '" placeholder="重量 / 组数，如 60kg">' +
+              '<input data-bind="ex" data-id="' + slot.id + '" data-f="note" value="' + esc(r.note || "") + '" placeholder="备注">' +
+            '</div>') +
+        '</div>';
+      }).join("") +
+      (plan.slots.some(function (s) { return s.opts.length > 1; })
+        ? '<div class="small muted" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)">找不到对应器械？点「换」，训练方向不变，动作可以替代。</div>'
+        : '') +
+    '</section>';
+
+    var mealsCard = '<section class="card">' +
+      '<div class="card-h"><div class="card-title">今日饮食</div>' +
+      '<div class="card-sub">' + round(tot.k) + ' / ' + S.settings.kcal + ' kcal · 蛋白 ' + round(tot.p) + 'g</div></div>' +
+      MEALS.map(function (m) {
+        var items = (d.meals && d.meals[m.k]) || [];
+        var t = mealTotals(d, m.k);
+        var pre = PRESETS.filter(function (p) { return p.meal === m.k; });
+        return '<div class="meal">' +
+          '<div class="meal-head"><div class="meal-name">' + m.n + '<span class="t">' + m.t + '</span></div>' +
+          '<div class="meal-kcal"><b>' + round(t.k) + '</b> kcal</div></div>' +
+          (items.length ? '<div class="foodlist">' + items.map(function (x, i) {
+            return '<div class="foodrow"><span class="fn">' + esc(x.n) + '</span>' +
+              '<span class="fg">' + x.g + 'g</span><span class="fk">' + round(x.k) + '</span>' +
+              '<button class="del" data-act="del" data-meal="' + m.k + '" data-i="' + i + '">×</button></div>';
+          }).join("") + '</div>' : '<div class="meal-empty">还没记录</div>') +
+          '<button class="addfood" data-act="add" data-meal="' + m.k + '">＋ 添加食物</button>' +
+          (pre.length ? '<div class="qchips" style="margin-top:8px">' + pre.map(function (p) {
+            return '<button class="qchip" data-act="preset" data-id="' + p.id + '">' + p.name + '</button>';
+          }).join("") + '</div>' : '') +
+        '</div>';
+      }).join("") +
+    '</section>';
+
+    var habits = '<section class="card">' +
+      '<div class="card-h"><div class="card-title">今日习惯</div><div class="card-sub">随手记一下</div></div>' +
+      '<div class="habits">' +
+        '<div class="habit"><div class="hk">饮水</div><div class="hv">' + (d.water || 0).toFixed(2).replace(/\.?0+$/, "") + '<span> L</span></div>' +
+          '<div class="stepper"><button data-act="water" data-d="-0.25">−</button><button data-act="water" data-d="0.25">＋</button></div></div>' +
+        '<div class="habit"><div class="hk">睡眠</div><input type="number" step="0.5" min="0" max="14" data-bind="sleep" value="' + (d.sleep == null ? "" : d.sleep) + '" placeholder="7.5"></div>' +
+        '<div class="habit"><div class="hk">步数</div><input type="number" step="500" min="0" data-bind="steps" value="' + (d.steps == null ? "" : d.steps) + '" placeholder="8000"></div>' +
+      '</div>' +
+    '</section>';
+
+    var noteCard = '<section class="card">' +
+      '<div class="card-h"><div class="card-title">一句话状态</div><div class="card-sub">今天感觉怎么样</div></div>' +
+      '<textarea class="note" data-bind="note" placeholder="例：腰有点紧，腿举减到 50kg；晚上加班，晚餐吃了便利店组合">' + esc(d.note || "") + '</textarea>' +
+    '</section>';
+
+    var tip = '';
+    if (plan.kind === "rest") tip = '<div class="card"><div class="warnbox">今天是休息日。可以散步、拉伸，别补练——恢复也是训练的一部分。</div></div>';
+
+    return hero(dateStr) +
+      '<div class="today-grid">' +
+        '<div class="col">' + trainCard + habits + '</div>' +
+        '<div class="col">' + mealsCard + noteCard + tip + '</div>' +
+      '</div>';
+  }
+
+  /* ---------------- 记录：日历 / 周总结 / 月总结 ---------------- */
+  function viewRecords() {
+    var tab = ui.subtab || "calendar";
+    var nav = '<div class="subnav">' +
+      [["calendar", "日历"], ["week", "周总结"], ["month", "月总结"]].map(function (t) {
+        return '<button class="' + (tab === t[0] ? "on" : "") + '" data-act="subtab" data-v="' + t[0] + '">' + t[1] + '</button>';
+      }).join("") + '</div>';
+    var body = tab === "week" ? viewWeek() : tab === "month" ? viewMonth() : viewCalendar();
+    return nav + body;
+  }
+
+  function streakDays() {
+    var streak = 0, cursor = todayStr();
+    if (!dayStatus(cursor)) cursor = addDays(cursor, -1);
+    while (dayStatus(cursor)) { streak++; cursor = addDays(cursor, -1); if (streak > 999) break; }
+    return streak;
+  }
+
+  function rangeStats(a, b) {
+    var out = { planned: 0, done: 0, partial: 0, recorded: 0, kcalSum: 0, kcalDays: 0, proteinSum: 0, proteinDays: 0, days: [] };
+    var startDate = S.settings.startDate || START;
+    for (var d = a; d <= b; d = addDays(d, 1)) {
+      var plan = planFor(d);
+      var st = trainStats(d);
+      var counted = (plan.kind === "A" || plan.kind === "B" || plan.kind === "C" || plan.kind === "cardio");
+      if (counted && d >= startDate) {
+        out.planned++;
+        if (st.pct >= 0.999) out.done++;
+        else if (st.pct > 0) out.partial++;
+      }
+      var day = S.days[d];
+      if (day) {
+        var t = dayTotals(day);
+        if (t.k > 0) { out.kcalSum += t.k; out.kcalDays++; out.recorded++; }
+        if (t.p > 0) out.proteinSum += t.p;
+        if (t.p >= S.settings.protein) out.proteinDays++;
+      }
+      var label = plan.kind === "cardio" ? "有氧 · 快走 / 椭圆机"
+        : plan.kind === "optional" ? "可选 · 户外走 / 游泳 / 骑车"
+        : plan.kind === "rest" ? "休息 + 拉伸"
+        : plan.tag + " · " + plan.name;
+      out.days.push({
+        date: d, wd: WD_CN[wd(d)], tag: label, kind: plan.kind,
+        done: st.any && st.pct >= 0.999, part: st.pct > 0 && st.pct < 0.999, started: st.any
+      });
+    }
+    return out;
+  }
+
+  function bodyRange(a, b) {
+    return Object.keys(S.body).filter(function (k) { return k >= a && k <= b; }).sort().map(function (k) {
+      return { k: k, v: S.body[k] || {} };
+    });
+  }
+
+  function weightChange(a, b) {
+    var all = bodyRange(a, b);
+    var ws = all.filter(function (x) { return x.v.w != null; });
+    var as = all.filter(function (x) { return x.v.wa != null; });
+    if (!ws.length && !as.length) return null;
+    var o = { wn: ws.length, an: as.length };
+    if (ws.length) { o.w1 = ws[0].v.w; o.w2 = ws[ws.length - 1].v.w; o.dw = Math.round((o.w2 - o.w1) * 10) / 10; }
+    if (as.length) { o.a1 = as[0].v.wa; o.a2 = as[as.length - 1].v.wa; o.da = Math.round((o.a2 - o.a1) * 10) / 10; }
+    return o;
+  }
+
+  function statBox(k, v) {
+    return '<div class="stat"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>';
+  }
+
+  function sign(n) { return (n > 0 ? "+" : "") + n; }
+
+  function bodyChangeCard(wc, title) {
+    if (!wc) return '<section class="card"><div class="card-h"><div class="card-title">' + title + '</div></div>' +
+      '<div class="muted small">还没有体重/腰围记录，去「日历」里补一条。</div></section>';
+    var h = '<div class="small muted" style="margin-bottom:6px">体重 ' + wc.wn + ' 次 · 腰围 ' + wc.an + ' 次</div>';
+    if (wc.w1 != null) h += '<div class="kv"><span>体重</span><b>' + sign(wc.dw) + ' kg <span class="muted small">' + wc.w1 + ' → ' + wc.w2 + '</span></b></div>';
+    if (wc.a1 != null) h += '<div class="kv"><span>腰围</span><b>' + sign(wc.da) + ' cm <span class="muted small">' + wc.a1 + ' → ' + wc.a2 + '</span></b></div>';
+    return '<section class="card"><div class="card-h"><div class="card-title">' + title + '</div><div class="card-sub">来自每周记录</div></div>' + h + '</section>';
+  }
+
+  function reviewCard(key, title, placeholder) {
+    var v = (S.reviews[key] || {}).text || "";
+    return '<section class="card"><div class="card-h"><div class="card-title">' + title + '</div><div class="card-sub">写给自己</div></div>' +
+      '<textarea class="note" data-bind="review" data-key="' + key + '" placeholder="' + placeholder + '">' + esc(v) + '</textarea></section>';
+  }
+
+  function viewWeek() {
+    var ws = ui.weekStart, we = addDays(ws, 6);
+    var r = rangeStats(ws, we);
+    var wk = weekIndex(ws);
+    var avgK = r.kcalDays ? Math.round(r.kcalSum / r.kcalDays) : 0;
+    var avgP = r.kcalDays ? Math.round(r.proteinSum / r.kcalDays) : 0;
+    var rate = r.planned ? Math.round(r.done / r.planned * 100) : 0;
+    var wc = weightChange(ws, we);
+
+    var rows = r.days.map(function (x) {
+      var label, cls;
+      if (x.kind === "rest") { label = "休息"; cls = ""; }
+      else if (x.kind === "optional") {
+        label = x.done ? "完成" : (x.part ? "部分" : "可选");
+        cls = x.done ? "done" : (x.part ? "part" : "");
+      } else {
+        label = x.done ? "完成" : (x.part ? "部分" : (x.started ? "未完成" : "未开始"));
+        cls = x.done ? "done" : (x.part ? "part" : (x.started ? "miss" : ""));
+      }
+      return '<div class="wrow" data-act="dayjump" data-date="' + x.date + '">' +
+        '<span class="wd">' + x.wd + '<br><span class="muted" style="font-size:10px">' + x.date.slice(5) + '</span></span>' +
+        '<span class="wn">' + esc(x.tag) + '</span>' +
+        '<span class="ws ' + cls + '">' + label + '</span></div>';
+    }).join("");
+
+    return '<section class="card">' +
+        '<div class="cal-head"><button class="iconbtn" data-act="weekprev">‹</button>' +
+        '<div class="cal-month">' + ws.slice(5) + ' – ' + we.slice(5) + (wk ? ' · 第 ' + wk + ' 周' : '') + '</div>' +
+        '<button class="iconbtn" data-act="weeknext">›</button></div>' +
+        '<div class="stats">' +
+          statBox("训练完成", r.planned ? r.done + '<small>/' + r.planned + ' 次</small>' : '—') +
+          statBox("完成率", r.planned ? rate + '<small>%</small>' : '—') +
+          statBox("平均热量", avgK + '<small>kcal</small>') +
+          statBox("蛋白达标", r.proteinDays + '<small>天</small>') +
+        '</div>' +
+        '<div class="small muted" style="margin-top:10px">' + (wk ? '' : '开营前 · ') + '连续打卡 ' + streakDays() + ' 天 · 记录 ' + r.recorded + ' 天 · 平均蛋白 ' + avgP + 'g</div>' +
+      '</section>' +
+      '<section class="card"><div class="card-h"><div class="card-title">每天完成情况</div><div class="card-sub">点一行跳到那天</div></div>' + rows + '</section>' +
+      bodyChangeCard(wc, "本周身体变化") +
+      reviewCard("w:" + ws, "本周小结", "例：这周练了 3 次，腰不疼；外卖 2 次，蛋白差一点");
+  }
+
+  function viewMonth() {
+    var y = ui.sumMonth.y, m = ui.sumMonth.m;
+    var first = ymd(new Date(y, m, 1, 12));
+    var last = ymd(new Date(y, m + 1, 0, 12));
+    var r = rangeStats(first, last);
+    var avgK = r.kcalDays ? Math.round(r.kcalSum / r.kcalDays) : 0;
+    var avgP = r.kcalDays ? Math.round(r.proteinSum / r.kcalDays) : 0;
+    var rate = r.planned ? Math.round(r.done / r.planned * 100) : 0;
+    var wc = weightChange(first, last);
+    var key = "m:" + y + "-" + pad(m + 1);
+
+    var rows = "", cur = weekStart(first), idx = 1;
+    while (cur <= last) {
+      var s = cur < first ? first : cur;
+      var e = addDays(cur, 6) > last ? last : addDays(cur, 6);
+      var rr = rangeStats(s, e);
+      var kk = rr.kcalDays ? Math.round(rr.kcalSum / rr.kcalDays) : 0;
+      var w2 = weightChange(s, e);
+      var wi = weekIndex(cur);
+      var title = wi ? "第 " + wi + " 周" : s.slice(5) + " – " + e.slice(5);
+      var sub = wi ? '<br><span class="muted small">' + s.slice(5) + ' – ' + e.slice(5) + '</span>' : "";
+      rows += '<div class="kv"><span><b>' + title + '</b>' + sub + '</span>' +
+        '<span style="text-align:right">' + rr.done + '/' + rr.planned + ' 次<br><span class="muted small">' + kk + ' kcal' +
+        (w2 && w2.dw != null ? ' · ' + sign(w2.dw) + ' kg' : '') + '</span></span></div>';
+      cur = addDays(cur, 7);
+      idx++;
+    }
+
+    return '<section class="card">' +
+        '<div class="cal-head"><button class="iconbtn" data-act="monthprev">‹</button>' +
+        '<div class="cal-month">' + y + ' 年 ' + (m + 1) + ' 月</div>' +
+        '<button class="iconbtn" data-act="monthnext">›</button></div>' +
+        '<div class="stats">' +
+          statBox("训练完成", r.planned ? r.done + '<small>/' + r.planned + ' 次</small>' : '—') +
+          statBox("完成率", r.planned ? rate + '<small>%</small>' : '—') +
+          statBox("平均热量", avgK + '<small>kcal</small>') +
+          statBox("蛋白达标", r.proteinDays + '<small>天</small>') +
+        '</div>' +
+        '<div class="small muted" style="margin-top:10px">打卡 ' + r.recorded + ' 天 · 连续 ' + streakDays() + ' 天 · 平均蛋白 ' + avgP + 'g</div>' +
+      '</section>' +
+      '<section class="card"><div class="card-h"><div class="card-title">分周对比</div><div class="card-sub">按周看进度</div></div>' + rows + '</section>' +
+      bodyChangeCard(wc, "本月身体变化") +
+      reviewCard(key, "本月小结", "例：这个月掉了 2.4kg，腰围少 3cm；下月把有氧加到 3 次");
+  }
+
+  /* ---------------- 日历 ---------------- */
+  function viewCalendar() {
+    var y = ui.cal.y, m = ui.cal.m;
+    var first = new Date(y, m, 1, 12);
+    var offset = (first.getDay() + 6) % 7;
+    var daysInMonth = new Date(y, m + 1, 0).getDate();
+    var cells = [];
+    for (var i = 0; i < offset; i++) {
+      var pd = new Date(y, m, 1 - (offset - i), 12);
+      cells.push({ d: pd, out: true });
+    }
+    for (var d = 1; d <= daysInMonth; d++) cells.push({ d: new Date(y, m, d, 12), out: false });
+    var extra = 0;
+    while (cells.length % 7 !== 0) {
+      extra++;
+      cells.push({ d: new Date(y, m, daysInMonth + extra, 12), out: true });
+    }
+
+    var grid = cells.map(function (c) {
+      var k = ymd(c.d);
+      var st = dayStatus(k);
+      var plan = planFor(k);
+      var cls = "cal-day" + (c.out ? " out" : "");
+      if (st) cls += " " + st;
+      if (!st && plan.kind === "rest") cls += " rest";
+      if (k === todayStr()) cls += " today";
+      return '<button class="' + cls + '" data-act="calday" data-date="' + k + '"><span class="d">' + c.d.getDate() + '</span><span class="dot"></span></button>';
+    }).join("");
+
+    var bodyList = Object.keys(S.body).sort().reverse();
+    var chartData = bodyList.slice(0, 16).reverse().map(function (k) {
+      return { x: k, y: S.body[k].w };
+    }).filter(function (p) { return p.y != null; });
+
+    var bodyRows = bodyList.slice(0, 8).map(function (k) {
+      var b = S.body[k];
+      return '<div class="mrow"><span class="md">' + k.slice(5) + '</span><span class="mv"><b>' + (b.w == null ? "—" : b.w) + '</b><span>kg</span>' +
+        (b.f != null ? '<span>· 体脂 ' + b.f + '%</span>' : '') +
+        (b.wa != null ? '<span>· 腰 ' + b.wa + 'cm</span>' : '') + '</span>' +
+        '<button class="del" data-act="delbody" data-date="' + k + '">×</button></div>';
+    }).join("");
+
+    return '<section class="card">' +
+      '<div class="cal-head"><button class="iconbtn" data-act="calprev">‹</button>' +
+      '<div class="cal-month">' + y + ' 年 ' + (m + 1) + ' 月</div>' +
+      '<button class="iconbtn" data-act="calnext">›</button></div>' +
+      '<div class="cal-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>' +
+      '<div class="cal-grid">' + grid + '</div>' +
+      '<div class="cal-legend"><span><i style="background:#1E6B4F"></i>完成</span><span><i style="background:#E0A03F"></i>部分</span><span><i style="background:#D14B33"></i>有记录未训练</span><span><i style="background:#D9DAD2"></i>未记录</span></div>' +
+    '</section>' +
+    '<section class="card">' +
+      '<div class="card-h"><div class="card-title">身体数据</div><div class="card-sub">每周记一次就够</div></div>' +
+      '<div class="form-grid">' +
+        '<div class="field"><label>日期</label><input type="date" id="bd-date" value="' + todayStr() + '"></div>' +
+        '<div class="field"><label>体重 kg</label><input type="number" step="0.1" id="bd-w" placeholder="102.4"></div>' +
+        '<div class="field"><label>体脂率 %</label><input type="number" step="0.1" id="bd-f" placeholder="36.1"></div>' +
+        '<div class="field"><label>腰围 cm</label><input type="number" step="0.5" id="bd-wa" placeholder="108"></div>' +
+      '</div>' +
+      '<div style="margin-top:10px"><button class="btn primary block" data-act="savebody">保存这次记录</button></div>' +
+      (chartData.length >= 2 ? '<div class="chart">' + lineChart(chartData) + '</div>' : '<div class="muted small" style="margin-top:10px">记录 2 次以上就会画出体重曲线。</div>') +
+      (bodyRows ? '<div class="mlist">' + bodyRows + '</div>' : '') +
+    '</section>';
+  }
+
+  function weekStart(dateStr) {
+    var d = parseYmd(dateStr);
+    var off = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - off);
+    return ymd(d);
+  }
+
+  function lineChart(data) {
+    var W = 320, H = 120, P = 30;
+    var ys = data.map(function (d) { return d.y; });
+    var min = Math.min.apply(null, ys), max = Math.max.apply(null, ys);
+    if (max === min) { max = min + 1; min = min - 1; }
+    var pts = data.map(function (d, i) {
+      var x = P + i * (W - 2 * P) / Math.max(1, data.length - 1);
+      var y = H - P - (d.y - min) / (max - min) * (H - 2 * P);
+      return [x, y];
+    });
+    var path = pts.map(function (p, i) { return (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+    var dots = pts.map(function (p) { return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3" fill="#1E6B4F"/>'; }).join("");
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' +
+      '<line x1="' + P + '" y1="' + (H - P) + '" x2="' + (W - P) + '" y2="' + (H - P) + '" stroke="#E3E5DD"/>' +
+      '<path d="' + path + '" fill="none" stroke="#1E6B4F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+      dots +
+      '<text x="' + P + '" y="' + (P - 8) + '" font-size="9" fill="#7B7C74">' + max.toFixed(1) + 'kg</text>' +
+      '<text x="' + P + '" y="' + (H - 8) + '" font-size="9" fill="#7B7C74">' + min.toFixed(1) + 'kg</text>' +
+      '<text x="' + (W - P) + '" y="' + (H - 8) + '" font-size="9" fill="#7B7C74" text-anchor="end">' + data[data.length - 1].x.slice(5) + '</text>' +
+    '</svg>';
+  }
+
+  /* ---------------- 动作教程 ---------------- */
+  function tutItems() {
+    var out = [], seen = {};
+    ["A", "B", "C"].forEach(function (k) {
+      TRAIN[k].slots.forEach(function (slot) {
+        slot.opts.forEach(function (id) {
+          if (seen[id]) return;
+          seen[id] = 1;
+          out.push({ id: id, day: k, dir: slot.dir });
+        });
+      });
+    });
+    CARDIO.slots[1].opts.forEach(function (id) {
+      if (seen[id]) return;
+      seen[id] = 1;
+      out.push({ id: id, day: "cardio", dir: "有氧 · 低冲击" });
+    });
+    return out;
+  }
+
+  function tutFiltered() {
+    var q = (ui.tutQ || "").trim().toLowerCase();
+    return tutItems().filter(function (it) {
+      if (ui.tutFilter !== "all" && it.day !== ui.tutFilter) return false;
+      var e = EX[it.id];
+      if (!e) return false;
+      if (q && (e.n + " " + e.eq + " " + it.dir).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+
+  function tutListHtml() {
+    var arr = tutFiltered();
+    if (!arr.length) return '<div class="muted small" style="padding:24px 0;text-align:center">没找到，换个词试试</div>';
+    return arr.map(function (it) {
+      var e = EX[it.id];
+      var tech = TECH[TUT_OF[it.id]] || TECH.core;
+      var open = ui.tutOpen === it.id;
+      var dayName = it.day === "cardio" ? "有氧" : "力量 " + it.day;
+      var canAnim = !!(FIGS_ANIM[tech.fig] && !REDUCED);
+      return '<div class="tut ' + (open ? "open" : "") + '">' +
+        '<div class="tut-h" data-act="tut" data-id="' + it.id + '">' +
+          '<div class="tut-thumb">' + FIGS[tech.fig] + '</div>' +
+          '<div class="tut-meta">' +
+            '<div class="tut-name">' + esc(e.n) + '<span class="eqtag">' + esc(e.eq) + '</span>' + (canAnim ? '<span class="livebadge2">动图</span>' : '') + '</div>' +
+            '<div class="tut-sub">' + dayName + ' · ' + esc(it.dir) + '</div>' +
+          '</div>' +
+          '<span class="tut-arrow">' + (open ? "−" : "+") + '</span>' +
+        '</div>' +
+        (open ? '<div class="tut-body">' +
+          '<div class="tut-fig' + (canAnim ? " live" : "") + '"' + (canAnim ? ' data-act="animtoggle"' : '') + '>' +
+            (canAnim ? FIGS_ANIM[tech.fig] : FIGS[tech.fig]) +
+            (canAnim ? '<span class="livebadge">点图暂停</span>' : '') +
+          '</div>' +
+          '<div class="tut-sec">怎么做</div>' +
+          '<ol class="steps">' + tech.steps.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + '</ol>' +
+          '<div class="tut-sec">容易做错</div>' +
+          '<ul class="errs">' + tech.errs.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + '</ul>' +
+          '<div class="tut-breath">呼吸与节奏：' + esc(tech.breath) + '</div>' +
+          (tech.safe ? '<div class="tut-safe">⚠ ' + esc(tech.safe) + '</div>' : '') +
+          '<div class="small muted" style="margin-top:8px">器械：' + esc(e.eq) + ' · 组次：' + esc(e.s) + ' · 要点：' + esc(e.tip) + '</div>' +
+        '</div>' : '') +
+      '</div>';
+    }).join("");
+  }
+
+  function viewTutorial() {
+    var days = [["all", "全部"], ["A", "A 下肢"], ["B", "B 上肢"], ["C", "C 后链"], ["cardio", "有氧"]];
+    var n = tutItems().length;
+    return '<section class="card">' +
+      '<div class="card-h"><div><div class="card-title">动作教程</div><div class="card-sub">零基础也能看懂 · 点开看步骤</div></div>' +
+      '<div class="tag">' + n + ' 个动作</div></div>' +
+      '<input class="search" id="tut-q" placeholder="搜动作或器械：腿举、哑铃、弹力带…" value="' + esc(ui.tutQ) + '">' +
+      '<div class="cats">' + days.map(function (d) {
+        return '<button class="chip ' + (ui.tutFilter === d[0] ? "on" : "") + '" data-act="tutf" data-v="' + d[0] + '">' + d[1] + '</button>';
+      }).join("") + '</div>' +
+      '<div id="tut-list">' + tutListHtml() + '</div>' +
+    '</section>' +
+    '<section class="card"><div class="warnbox">示意图只表示动作方向，不追求解剖细节。第一次用某个器械，先用最轻重量试 8 次，确认腰和膝盖没有不适再加重量。</div></section>';
+  }
+
+  /* ---------------- 计划 ---------------- */
+  function viewPlan() {
+    var sched = '<table class="plan-table"><tr><th>时间</th><th>内容</th><th>时长</th></tr>' +
+      PLAN.schedule.map(function (r) { return '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td><td class="muted">' + r[2] + '</td></tr>'; }).join("") + '</table>';
+
+    var prog = '<table class="plan-table"><tr><th>周次</th><th>频率</th><th>组数</th><th>目标</th></tr>' +
+      PLAN.progression.map(function (r) { return '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td><td>' + r[2] + '</td><td class="muted">' + r[4] + '</td></tr>'; }).join("") + '</table>';
+
+    var ex = ["A", "B", "C"].map(function (k) {
+      return '<div style="margin:10px 0 14px"><span class="tag">' + TRAIN[k].tag + ' · ' + TRAIN[k].day + '</span>' +
+        TRAIN[k].slots.map(function (s) {
+          var d = EX[s.def];
+          return '<div class="slotrow">' +
+            '<div class="slotdir">' + s.dir + '</div>' +
+            '<div class="slotdef">' + d.n + ' <span class="muted small">' + d.s + ' · ' + d.eq + '</span></div>' +
+            '<div class="slotopts">' + s.opts.map(function (id) {
+              var e = EX[id];
+              return '<span class="optpill' + (id === s.def ? " on" : "") + '">' + e.n + '<i>' + e.eq + '</i></span>';
+            }).join("") + '</div></div>';
+        }).join("") + '</div>';
+    }).join("") +
+      '<div style="margin:4px 0 2px"><span class="tag">有氧 · 周二 / 周四</span>' +
+      '<div class="slotopts" style="margin-top:8px">' + CARDIO.slots[1].opts.map(function (id) {
+        var e = EX[id];
+        return '<span class="optpill' + (id === "walk" ? " on" : "") + '">' + e.n + '<i>' + e.eq + '</i></span>';
+      }).join("") + '</div></div>';
+
+    var caf = '<div class="stats" style="grid-template-columns:1fr 1fr">' +
+      '<div class="stat" style="background:#F3F8F4"><div class="k" style="color:#1E6B4F;font-weight:700">优先选择</div><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;line-height:1.7">' +
+        PLAN.cafRed.map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul></div>' +
+      '<div class="stat" style="background:#FBF0E2"><div class="k" style="color:#B06F1C;font-weight:700">尽量避开</div><ul style="margin:6px 0 0;padding-left:16px;font-size:12px;line-height:1.7">' +
+        PLAN.cafBlack.map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul></div></div>';
+
+    var menu = MENU.map(function (r) {
+      return '<div style="padding:9px 0;border-bottom:1px dashed var(--line)">' +
+        '<div style="font-weight:700;font-size:12.5px">' + r.d + '</div>' +
+        '<div class="small" style="color:#4A4B44;line-height:1.65;margin-top:2px">' +
+          '早：' + r.b + '<br>加餐：' + r.s + '<br>午：' + r.l + '<br>晚：' + r.dn +
+        '</div></div>';
+    }).join("");
+
+    var phases = '<table class="plan-table"><tr><th>阶段</th><th>体重</th><th>体脂</th><th>重点</th></tr>' +
+      PHASES.map(function (p) { return '<tr><td><b>' + p.name + '</b><br><span class="muted small">' + p.start.slice(2) + ' – ' + p.end.slice(2) + '</span></td><td>' + p.weight + '</td><td>' + p.fat + '</td><td class="muted">' + p.focus + '</td></tr>'; }).join("") + '</table>';
+
+    var emerg = PLAN.emergency.map(function (r) { return '<div class="kv"><b>' + r[0] + '</b><span style="flex:1;text-align:right;color:#555">' + r[1] + '</span></div>'; }).join("");
+
+    return '<section class="card">' +
+      '<div class="card-h"><div class="card-title">训练计划</div><div class="card-sub">周一 A · 周三 B · 周五 C</div></div>' +
+      acc("每周安排", sched, true) +
+      acc("动作库", '<p class="muted small" style="margin-bottom:8px">到健身房先看器械：能对上哪个就用哪个；没有器械就选自重或弹力带版本。训练方向不变，点今日训练里的「换」就能替换。</p>' + ex) +
+      acc("8 周进阶", prog) +
+      acc("禁忌动作", '<p style="color:#AD4630">' + PLAN.avoid + '</p><p class="muted small">日常：久坐加腰靠、每 60 分钟起身；搬东西屈髋屈膝；起床先侧身撑起。</p>') +
+    '</section>' +
+    '<section class="card">' +
+      '<div class="card-h"><div class="card-title">怎么吃</div><div class="card-sub">食堂为主</div></div>' +
+      acc("食堂红黑榜", caf, true) +
+      acc("7 天菜单", menu) +
+      acc("加班 / 外食应急", emerg) +
+    '</section>' +
+    '<section class="card">' +
+      '<div class="card-h"><div class="card-title">周期</div><div class="card-sub">48 周 + 13 周维持</div></div>' +
+      acc("阶段目标", phases, true) +
+      '<div class="warnbox" style="margin-top:10px">出现腿麻、腿无力、夜间痛醒或大小便异常，先就医，不要先训练。</div>' +
+    '</section>';
+  }
+
+  function acc(title, body, open) {
+    return '<details class="acc"' + (open ? " open" : "") + '><summary>' + title + '</summary><div class="acc-body">' + body + '</div></details>';
+  }
+
+  /* ---------------- 采购 ---------------- */
+  function shopKey(list, i) { return list + "-" + i; }
+  function viewShop() {
+    var wk = weekStart(todayStr());
+    if (S.shop.week !== wk) { S.shop.week = wk; S.shop.checked = {}; save(); }
+    var total = SHOP.sunday.items.length + SHOP.wednesday.items.length;
+    var done = Object.keys(S.shop.checked).filter(function (k) { return S.shop.checked[k]; }).length;
+
+    function listBlock(key, data) {
+      var items = data.items.map(function (it, i) {
+        var k = shopKey(key, i);
+        var on = !!S.shop.checked[k];
+        return '<div class="shop-item ' + (on ? "on" : "") + '" data-act="shop" data-k="' + k + '">' +
+          '<span class="shop-check">' + (on ? "✓" : "") + '</span>' +
+          '<span class="shop-cat">' + it.c + '</span>' +
+          '<span class="sn">' + it.n + '</span>' +
+          '<span class="sa">' + it.a + '</span>' +
+        '</div>';
+      }).join("");
+      return '<div class="shop-block" style="margin-top:14px">' +
+        '<div class="shop-head"><div><div class="card-title">' + data.title + '</div><div class="card-sub">' + data.sub + '</div></div>' +
+        '<span class="tag">' + data.items.length + ' 项</span></div>' +
+        items + '</div>';
+    }
+
+    return '<section class="card">' +
+      '<div class="card-h"><div><div class="card-title">本周采购</div><div class="card-sub">' + wk + ' 起这一周</div></div>' +
+      '<button class="btn ghost" style="height:32px;padding:0 12px;font-size:12px" data-act="shopreset">重置</button></div>' +
+      '<div class="shop-prog"><i style="width:' + (total ? Math.round(done / total * 100) : 0) + '%"></i></div>' +
+      '<div class="small muted">已买 ' + done + ' / ' + total + ' 项</div>' +
+      listBlock("sun", SHOP.sunday) +
+      listBlock("wed", SHOP.wednesday) +
+      '<div style="margin-top:16px"><div class="card-title">常温囤货</div><div class="card-sub" style="margin-bottom:6px">2–4 周补一次</div>' +
+      '<div style="font-size:13px;line-height:1.9;color:#3A3B35">' + SHOP.pantry.join(" · ") + '</div></div>' +
+    '</section>' +
+    '<section class="card"><div class="warnbox">没有冷冻室：生禽肉冷藏 1–2 天、生牛肉 2–3 天、熟食 3 天。周日买前半周，周三顺路补后半周，别一次囤五天。</div></section>';
+  }
+
+  /* ---------------- 设置 ---------------- */
+  function viewSettings() {
+    var bytes = 0;
+    try { bytes = new Blob([JSON.stringify(S)]).size; } catch (e) {}
+    var last = S.lastExport ? new Date(S.lastExport).toLocaleDateString("zh-CN") : "从未导出";
+    return '<section class="card">' +
+      '<div class="card-h"><div class="card-title">目标设置</div><div class="card-sub">改完点保存</div></div>' +
+      '<div class="form-grid">' +
+        '<div class="field"><label>每日热量 kcal</label><input type="number" id="st-kcal" value="' + S.settings.kcal + '"></div>' +
+        '<div class="field"><label>每日蛋白 g</label><input type="number" id="st-protein" value="' + S.settings.protein + '"></div>' +
+        '<div class="field"><label>起始体重 kg</label><input type="number" step="0.1" id="st-sw" value="' + S.settings.startWeight + '"></div>' +
+        '<div class="field"><label>目标体重 kg</label><input type="number" step="0.1" id="st-gw" value="' + S.settings.goalWeight + '"></div>' +
+      '</div>' +
+      '<div style="margin-top:10px"><button class="btn primary block" data-act="savesettings">保存设置</button></div>' +
+    '</section>' +
+    '<section class="card">' +
+      '<div class="card-h"><div class="card-title">数据</div><div class="card-sub">本机保存 · ' + (bytes / 1024).toFixed(1) + ' KB</div></div>' +
+      '<div class="small muted" style="margin-bottom:10px">数据只存在这台设备的浏览器里。换设备、清缓存前，先导出备份。</div>' +
+      '<button class="btn primary block" data-act="export">导出备份（JSON）</button>' +
+      '<div style="height:8px"></div>' +
+      '<button class="btn ghost block" data-act="import">导入备份</button>' +
+      '<div style="height:8px"></div>' +
+      '<button class="btn danger block" data-act="reset">清空全部记录</button>' +
+      '<div class="small muted" style="margin-top:10px">上次导出：' + last + '</div>' +
+      '<input type="file" id="file-import" accept=".json,application/json" style="display:none">' +
+    '</section>' +
+    '<section class="card">' +
+      '<div class="card-h"><div class="card-title">怎么用</div><div class="card-sub">30 秒上手</div></div>' +
+      '<div class="small" style="line-height:2;color:#4A4B44">' +
+        '① 每天打开「今日」，练完一个动作点「完成」，只做了一半点「部分」。<br>' +
+        '② 吃完一餐就加食物，按克数记录，热量和蛋白会自动累计。<br>' +
+        '③ 每周日量一次体重、腰围，记在「日历 → 身体数据」。<br>' +
+        '④ 每周导出一次备份；换手机或清缓存前，务必先导出。<br>' +
+        '⑤ 手机浏览器菜单里选「添加到主屏幕」，就能像 App 一样打开。' +
+      '</div>' +
+    '</section>' +
+    '<section class="card">' +
+      '<div class="card-h"><div class="card-title">关于</div></div>' +
+      '<div class="small" style="line-height:1.8;color:#4A4B44">' +
+        '依据 2026-10-17 体成分报告（男性，23 岁，180cm，102.4kg，体脂 36.1%，内脏脂肪 15.0）制定。<br>' +
+        '食物热量为常见食物的估算值，误差约 10–20%；分量估计比食物库更重要。<br>' +
+        '本工具不构成医疗建议。腰椎滑脱请先经脊柱外科或康复科评估；出现腿麻、无力、大小便异常立即就医。' +
+      '</div>' +
+    '</section>';
+  }
+
+  /* ---------------- 弹层：食物 ---------------- */
+  function openFood(meal) {
+    ui.modal = { type: "food", meal: meal, q: "", cat: "全部", pick: null, grams: null, custom: false };
+    renderModal();
+  }
+  function closeModal() { ui.modal = null; document.getElementById("modal-root").innerHTML = ""; }
+
+  function openSwap(slotId) {
+    var slot = findSlot(slotId);
+    if (!slot) return;
+    ui.modal = { type: "swap", slot: slot, asDefault: false };
+    renderModal();
+  }
+
+  function applySwap(exId) {
+    var m = ui.modal;
+    if (!m || m.type !== "swap") return;
+    var slot = m.slot;
+    var d = ensureDay(ui.date);
+    var rec = d.train[slot.id] || {};
+    if (m.asDefault) {
+      S.prefs[slot.id] = exId;
+      delete rec.ex;
+    } else {
+      var base = S.prefs[slot.id] || slot.def;
+      if (exId === base) delete rec.ex;
+      else rec.ex = exId;
+    }
+    d.train[slot.id] = rec;
+    flush();
+    closeModal();
+    render();
+    toast("已换成 " + EX[exId].n + (m.asDefault ? "（以后默认）" : ""));
+  }
+
+  function resetEx() {
+    var m = ui.modal;
+    if (!m || m.type !== "swap") return;
+    var slot = m.slot;
+    delete S.prefs[slot.id];
+    var d = ensureDay(ui.date);
+    if (d.train[slot.id]) delete d.train[slot.id].ex;
+    flush();
+    closeModal();
+    render();
+    toast("已恢复默认动作");
+  }
+
+  function allFoods() {
+    return S.customFoods.map(function (f) { return Object.assign({ custom: true }, f); }).concat(FOODS);
+  }
+  function filteredFoods() {
+    var q = (ui.modal.q || "").trim().toLowerCase();
+    return allFoods().filter(function (f) {
+      if (ui.modal.cat !== "全部" && f.c !== ui.modal.cat && !(ui.modal.cat === "自定义" && f.custom)) return false;
+      if (q && f.n.toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    }).slice(0, 60);
+  }
+
+  function foodListHtml() {
+    var list = filteredFoods().map(function (f) {
+      return '<div class="fitem" data-act="pick" data-id="' + f.i + '">' +
+        '<div class="fi"><div class="fname">' + esc(f.n) + (f.custom ? '<span class="custom-tag">自定义</span>' : "") + '</div>' +
+        '<div class="fsub">' + f.c + ' · 蛋白 ' + f.p + 'g/100g</div></div>' +
+        '<div class="fk">' + f.k + '<span style="font-size:10px;font-weight:500;color:#9A9B93"> kcal</span></div></div>';
+    }).join("");
+    return list || '<div class="muted small" style="padding:20px 0;text-align:center">没找到，换个词或自定义一个</div>';
+  }
+
+  function renderModal() {
+    var m = ui.modal;
+    var root = document.getElementById("modal-root");
+    if (!m) { root.innerHTML = ""; return; }
+
+    var inner;
+    if (m.type === "food") {
+      if (m.pick) {
+        var f = m.pick;
+        var grams = m.grams || f.g || 100;
+        var k = Math.round(f.k * grams / 100);
+        var p = Math.round(f.p * grams / 100 * 10) / 10;
+        inner = '<div class="sheet-h"><div class="sheet-t">' + esc(f.n) + '<span class="custom-tag">' + (f.k) + ' kcal/100g</span></div>' +
+          '<button class="iconbtn" data-act="closemodal">×</button></div>' +
+          '<div class="sheet-b">' +
+            '<div class="muted small" style="margin-bottom:8px">每 100g：' + f.k + ' kcal · 蛋白 ' + f.p + 'g</div>' +
+            '<div class="grams"><input type="number" id="gram-input" value="' + grams + '" min="1" step="10"><span class="u">克</span></div>' +
+            '<div class="qchips">' + [50, 100, 150, 200, 250].map(function (g) {
+              return '<button class="qchip ' + (g === grams ? "on" : "") + '" data-act="grams" data-g="' + g + '">' + g + 'g</button>';
+            }).join("") + '</div>' +
+            '<div class="calcbox"><div><div class="ck">热量</div><div class="cv">' + k + ' kcal</div></div>' +
+            '<div style="text-align:right"><div class="ck">蛋白质</div><div class="cv">' + p + ' g</div></div></div>' +
+          '</div>' +
+          '<div class="sheet-f"><button class="btn ghost" data-act="backfood" style="flex:0 0 96px">返回</button>' +
+          '<button class="btn primary" data-act="confirmfood" style="flex:1">加入' + mealName(m.meal) + '</button></div>';
+      } else if (m.custom) {
+        inner = '<div class="sheet-h"><div class="sheet-t">自定义食物</div><button class="iconbtn" data-act="closemodal">×</button></div>' +
+          '<div class="sheet-b">' +
+            '<div class="field" style="margin-bottom:10px"><label>名称</label><input id="cf-name" placeholder="例：公司食堂的土豆烧鸡"></div>' +
+            '<div class="form-grid">' +
+              '<div class="field"><label>每 100g 热量</label><input type="number" id="cf-k" placeholder="150"></div>' +
+              '<div class="field"><label>每 100g 蛋白</label><input type="number" id="cf-p" placeholder="12"></div>' +
+            '</div>' +
+            '<div class="small muted" style="margin-top:10px">不确定就按同类菜估一个值，先能记录比精确更重要。</div>' +
+          '</div>' +
+          '<div class="sheet-f"><button class="btn ghost" data-act="backfood" style="flex:0 0 96px">返回</button>' +
+          '<button class="btn primary" data-act="savecustom" style="flex:1">保存并添加</button></div>';
+      } else {
+        inner = '<div class="sheet-h"><div class="sheet-t">添加食物 · ' + mealName(m.meal) + '</div>' +
+          '<button class="iconbtn" data-act="closemodal">×</button></div>' +
+          '<div class="sheet-b">' +
+            '<input class="search" id="food-q" placeholder="搜索：鸡胸、米饭、酸奶…" value="' + esc(m.q) + '">' +
+            '<div class="cats">' + CATS.concat(["自定义"]).map(function (c) {
+              return '<button class="chip ' + (m.cat === c ? "on" : "") + '" data-act="cat" data-c="' + c + '">' + c + '</button>';
+            }).join("") + '</div>' +
+            '<div id="food-list">' + foodListHtml() + '</div>' +
+          '</div>' +
+          '<div class="sheet-f"><button class="btn ghost" style="flex:1" data-act="newcustom">＋ 自定义食物</button></div>';
+      }
+    } else if (m.type === "swap") {
+      var slot = m.slot;
+      var cur = exFor(slot, ui.date);
+      inner = '<div class="sheet-h"><div class="sheet-t">换动作 · ' + esc(slot.dir) + '</div>' +
+        '<button class="iconbtn" data-act="closemodal">×</button></div>' +
+        '<div class="sheet-b">' +
+          '<div class="muted small" style="margin-bottom:10px">训练方向不变，选一个你现在有的器械；没有器械就选自重 / 弹力带版本。</div>' +
+          slot.opts.map(function (id) {
+            var e = EX[id];
+            var isCur = id === cur.id;
+            return '<div class="opt ' + (isCur ? "on" : "") + '" data-act="pickex" data-id="' + id + '">' +
+              '<div class="oi">' +
+                '<div class="optname">' + esc(e.n) + '<span class="eqtag">' + esc(e.eq) + '</span></div>' +
+                '<div class="osub">' + esc(e.s) + ' · ' + esc(e.tip) + '</div>' +
+              '</div>' +
+              (isCur ? '<span class="ocheck">✓</span>' : '') +
+            '</div>';
+          }).join("") +
+          '<div class="chk" data-act="asdef"><span class="cbox ' + (m.asDefault ? "on" : "") + '">' + (m.asDefault ? "✓" : "") + '</span>以后同类训练默认用这个</div>' +
+          '<div class="row" style="gap:8px;margin-top:6px">' +
+            '<button class="btn ghost" style="flex:1" data-act="tutfromswap">看这个动作的教程</button>' +
+            (cur.custom ? '<button class="btn ghost" style="flex:1" data-act="resetex">恢复默认</button>' : '') +
+          '</div>' +
+        '</div>';
+    }
+    root.innerHTML = '<div class="overlay" data-act="overlay"><div class="sheet">' + inner + '</div></div>';
+    if (m.type === "food" && !m.pick && !m.custom) {
+      var inp = document.getElementById("food-q");
+      if (inp) {
+        inp.focus();
+        inp.setSelectionRange(inp.value.length, inp.value.length);
+      }
+    }
+  }
+
+  function mealName(k) {
+    for (var i = 0; i < MEALS.length; i++) if (MEALS[i].k === k) return MEALS[i].n;
+    return "";
+  }
+
+  function addFoodItem(meal, food, grams) {
+    var d = ensureDay(ui.date);
+    var k = Math.round(food.k * grams / 100);
+    var p = Math.round(food.p * grams / 100 * 10) / 10;
+    d.meals[meal].push({ id: food.i, n: food.n, g: grams, k: k, p: p });
+    save();
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  function render() {
+    var app = document.getElementById("app");
+    var tabs = [
+      ["today", "今日", "◉"], ["records", "记录", "▦"], ["plan", "计划", "☰"],
+      ["tut", "动作", "▣"], ["shop", "采购", "▤"], ["settings", "设置", "⚙"]
+    ];
+    var nav = '<nav class="tabbar"><div class="tabbar-inner">' + tabs.map(function (t) {
+      return '<button class="tab ' + (ui.tab === t[0] ? "on" : "") + '" data-act="tab" data-tab="' + t[0] + '">' +
+        '<span class="ti">' + t[2] + '</span><span class="tl">' + t[1] + '</span></button>';
+    }).join("") + '</div></nav>';
+
+    var top = '<header class="topbar"><div class="topbar-inner">' +
+      '<div class="brand"><span class="dot"></span>体成分计划<small>48 周</small></div>' +
+      (ui.tab === "today" ?
+        '<div class="daynav"><button class="iconbtn" data-act="prev">‹</button>' +
+        '<button class="today-btn" data-act="today">今天</button>' +
+        '<button class="iconbtn" data-act="next">›</button></div>' : '') +
+      '</div></header>';
+
+    var body = "";
+    if (ui.tab === "today") body = viewToday();
+    else if (ui.tab === "records") body = viewRecords();
+    else if (ui.tab === "tut") body = viewTutorial();
+    else if (ui.tab === "plan") body = viewPlan();
+    else if (ui.tab === "shop") body = viewShop();
+    else body = viewSettings();
+
+    app.innerHTML = top + '<main class="app" id="view">' + body + '</main>' + nav;
+  }
+
+  /* ---------------- 事件 ---------------- */
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-act]");
+    if (!el) return;
+    var act = el.getAttribute("data-act");
+    var dk = ui.date;
+
+    if (act === "tab") { ui.tab = el.getAttribute("data-tab"); render(); window.scrollTo(0, 0); return; }
+    if (act === "tutf") { ui.tutFilter = el.getAttribute("data-v"); render(); return; }
+    if (act === "tut") {
+      var tid = el.getAttribute("data-id");
+      ui.tutOpen = ui.tutOpen === tid ? null : tid;
+      render();
+      return;
+    }
+    if (act === "animtoggle") {
+      var sv = el.querySelector("svg");
+      if (sv) {
+        if (sv.getAttribute("data-paused") === "1") {
+          sv.unpauseAnimations();
+          sv.setAttribute("data-paused", "0");
+        } else {
+          sv.pauseAnimations();
+          sv.setAttribute("data-paused", "1");
+        }
+      }
+      return;
+    }
+    if (act === "prev") { ui.date = addDays(ui.date, -1); syncCalToDate(); render(); return; }
+    if (act === "next") { ui.date = addDays(ui.date, 1); syncCalToDate(); render(); return; }
+    if (act === "today") { ui.date = todayStr(); syncCalToDate(); render(); return; }
+
+    if (act === "status") {
+      var id = el.getAttribute("data-id");
+      var v = el.getAttribute("data-v");
+      var d = ensureDay(dk);
+      var rec = d.train[id] || {};
+      rec.v = v;
+      d.train[id] = rec;
+      save(); render(); return;
+    }
+    if (act === "water") {
+      var d2 = ensureDay(dk);
+      var delta = parseFloat(el.getAttribute("data-d"));
+      d2.water = Math.max(0, Math.round(((d2.water || 0) + delta) * 100) / 100);
+      save(); render(); return;
+    }
+    if (act === "add") { openFood(el.getAttribute("data-meal")); return; }
+    if (act === "swap") { openSwap(el.getAttribute("data-slot")); return; }
+    if (act === "del") {
+      var meal = el.getAttribute("data-meal");
+      var i = parseInt(el.getAttribute("data-i"), 10);
+      var d3 = ensureDay(dk);
+      d3.meals[meal].splice(i, 1);
+      save(); render(); return;
+    }
+    if (act === "preset") {
+      var pid = el.getAttribute("data-id");
+      var preset = PRESETS.filter(function (p) { return p.id === pid; })[0];
+      if (preset) {
+        preset.items.forEach(function (it) {
+          var f = FOOD_MAP[it[0]];
+          if (f) addFoodItem(preset.meal, f, it[1]);
+        });
+        flush(); render(); toast("已添加：" + preset.name);
+      }
+      return;
+    }
+    if (act === "calprev") { ui.cal.m--; if (ui.cal.m < 0) { ui.cal.m = 11; ui.cal.y--; } render(); return; }
+    if (act === "calnext") { ui.cal.m++; if (ui.cal.m > 11) { ui.cal.m = 0; ui.cal.y++; } render(); return; }
+    if (act === "subtab") { ui.subtab = el.getAttribute("data-v"); render(); window.scrollTo(0, 0); return; }
+    if (act === "weekprev" || act === "weeknext") {
+      ui.weekStart = addDays(ui.weekStart, act === "weekprev" ? -7 : 7);
+      render(); return;
+    }
+    if (act === "monthprev" || act === "monthnext") {
+      var md = new Date(ui.sumMonth.y, ui.sumMonth.m + (act === "monthprev" ? -1 : 1), 1, 12);
+      ui.sumMonth = { y: md.getFullYear(), m: md.getMonth() };
+      render(); return;
+    }
+    if (act === "dayjump") {
+      ui.date = el.getAttribute("data-date");
+      ui.tab = "today";
+      syncCalToDate();
+      render(); window.scrollTo(0, 0); return;
+    }
+    if (act === "calday") {
+      ui.date = el.getAttribute("data-date");
+      ui.tab = "today";
+      syncCalToDate();
+      render(); window.scrollTo(0, 0); return;
+    }
+    if (act === "savebody") {
+      var bd = document.getElementById("bd-date").value || todayStr();
+      var w = parseFloat(document.getElementById("bd-w").value);
+      var f = parseFloat(document.getElementById("bd-f").value);
+      var wa = parseFloat(document.getElementById("bd-wa").value);
+      if (!w && !f && !wa) { toast("至少填一项"); return; }
+      S.body[bd] = { w: isNaN(w) ? null : w, f: isNaN(f) ? null : f, wa: isNaN(wa) ? null : wa };
+      flush(); render(); toast("已保存 " + bd); return;
+    }
+    if (act === "delbody") {
+      var dd = el.getAttribute("data-date");
+      if (confirm("删除 " + dd + " 的身体数据？")) { delete S.body[dd]; flush(); render(); }
+      return;
+    }
+    if (act === "shop") {
+      var k = el.getAttribute("data-k");
+      S.shop.checked[k] = !S.shop.checked[k];
+      save(); render(); return;
+    }
+    if (act === "shopreset") {
+      if (confirm("清空本周采购勾选？")) { S.shop.checked = {}; flush(); render(); }
+      return;
+    }
+    if (act === "savesettings") {
+      var kc = parseInt(document.getElementById("st-kcal").value, 10);
+      var pr = parseInt(document.getElementById("st-protein").value, 10);
+      var sw = parseFloat(document.getElementById("st-sw").value);
+      var gw = parseFloat(document.getElementById("st-gw").value);
+      if (kc > 800) S.settings.kcal = kc;
+      if (pr > 30) S.settings.protein = pr;
+      if (!isNaN(sw)) S.settings.startWeight = sw;
+      if (!isNaN(gw)) S.settings.goalWeight = gw;
+      flush(); render(); toast("设置已保存"); return;
+    }
+    if (act === "export") { doExport(); return; }
+    if (act === "import") { var fi = document.getElementById("file-import"); if (fi) fi.click(); return; }
+    if (act === "reset") {
+      if (confirm("确定清空全部记录？建议先导出备份。")) {
+        if (confirm("再确认一次：所有打卡、饮食、身体数据都会删除。")) {
+          S = defaultState(); flush(); render(); toast("已清空");
+        }
+      }
+      return;
+    }
+
+    /* modal */
+    if (act === "closemodal") { closeModal(); return; }
+    if (act === "overlay") { if (e.target === el) closeModal(); return; }
+    if (act === "pickex") { applySwap(el.getAttribute("data-id")); return; }
+    if (act === "asdef") { ui.modal.asDefault = !ui.modal.asDefault; renderModal(); return; }
+    if (act === "resetex") { resetEx(); return; }
+    if (act === "tutfromswap") {
+      var tslot = ui.modal.slot;
+      var tid2 = exFor(tslot, ui.date).id;
+      closeModal();
+      ui.tab = "tut";
+      ui.tutFilter = "all";
+      ui.tutQ = "";
+      ui.tutOpen = tid2;
+      render();
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (act === "cat") { ui.modal.cat = el.getAttribute("data-c"); renderModal(); return; }
+    if (act === "pick") {
+      var fid = el.getAttribute("data-id");
+      var food = allFoods().filter(function (f) { return f.i === fid; })[0];
+      if (food) { ui.modal.pick = food; ui.modal.grams = food.g || 100; renderModal(); }
+      return;
+    }
+    if (act === "backfood") { ui.modal.pick = null; ui.modal.custom = false; renderModal(); return; }
+    if (act === "grams") {
+      ui.modal.grams = parseInt(el.getAttribute("data-g"), 10);
+      renderModal(); return;
+    }
+    if (act === "confirmfood") {
+      var g = parseFloat(document.getElementById("gram-input").value);
+      if (!g || g <= 0) { toast("请输入克数"); return; }
+      var mName = mealName(ui.modal.meal);
+      addFoodItem(ui.modal.meal, ui.modal.pick, g);
+      flush(); closeModal(); render(); toast("已加入" + mName);
+      return;
+    }
+    if (act === "newcustom") { ui.modal.custom = true; ui.modal.pick = null; renderModal(); return; }
+    if (act === "savecustom") {
+      var name = (document.getElementById("cf-name").value || "").trim();
+      var ck = parseFloat(document.getElementById("cf-k").value);
+      var cp = parseFloat(document.getElementById("cf-p").value);
+      if (!name) { toast("填个名称"); return; }
+      if (!ck || ck <= 0) { toast("填一下每 100g 热量"); return; }
+      var nf = { i: "c" + uid(), n: name, k: ck, p: isNaN(cp) ? 0 : cp, c: "自定义", g: 100, u: "份" };
+      S.customFoods.push(nf);
+      addFoodItem(ui.modal.meal, nf, 100);
+      flush(); closeModal(); render(); toast("已保存并添加");
+      return;
+    }
+  });
+
+  /* 输入事件：不重绘，避免丢焦点 */
+  var inputTimer = null;
+  document.addEventListener("input", function (e) {
+    var t = e.target;
+
+    if (t.id === "food-q" && ui.modal) {
+      ui.modal.q = t.value;
+      var fl = document.getElementById("food-list");
+      if (fl) fl.innerHTML = foodListHtml();
+      return;
+    }
+
+    if (t.id === "tut-q") {
+      ui.tutQ = t.value;
+      var tl = document.getElementById("tut-list");
+      if (tl) tl.innerHTML = tutListHtml();
+      return;
+    }
+
+    var bind = t.getAttribute && t.getAttribute("data-bind");
+    if (!bind) return;
+
+    if (bind === "sleep" || bind === "steps") {
+      var dd = ensureDay(ui.date);
+      var v = t.value === "" ? null : parseFloat(t.value);
+      dd[bind] = isNaN(v) ? null : v;
+      scheduleSave();
+      return;
+    }
+    if (bind === "note") {
+      ensureDay(ui.date).note = t.value;
+      scheduleSave();
+      return;
+    }
+    if (bind === "review") {
+      var rk = t.getAttribute("data-key");
+      S.reviews[rk] = S.reviews[rk] || {};
+      S.reviews[rk].text = t.value;
+      S.reviews[rk].at = Date.now();
+      scheduleSave();
+      return;
+    }
+    if (bind === "ex") {
+      var id = t.getAttribute("data-id");
+      var field = t.getAttribute("data-f");
+      var d = ensureDay(ui.date);
+      var rec = d.train[id] || {};
+      rec[field] = t.value;
+      d.train[id] = rec;
+      scheduleSave();
+      return;
+    }
+  });
+
+  function scheduleSave() {
+    clearTimeout(inputTimer);
+    inputTimer = setTimeout(flush, 300);
+  }
+
+  document.addEventListener("change", function (e) {
+    if (e.target && e.target.id === "file-import") {
+      var f = e.target.files && e.target.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var o = JSON.parse(reader.result);
+          if (!o || typeof o !== "object" || !o.days) throw new Error("bad");
+          if (!confirm("导入会覆盖当前全部记录，确定？")) return;
+          var base = defaultState();
+          o.settings = Object.assign(base.settings, o.settings || {});
+          o.customFoods = o.customFoods || [];
+          o.body = o.body || {};
+          o.reviews = o.reviews || {};
+          o.prefs = o.prefs || {};
+          o.shop = o.shop || { week: "", checked: {} };
+          S = o;
+          flush(); render(); toast("导入成功");
+        } catch (err) {
+          alert("文件格式不对，请选择本工具导出的 JSON 备份。");
+        }
+      };
+      reader.readAsText(f);
+      e.target.value = "";
+    }
+  });
+
+  function doExport() {
+    var data = JSON.stringify(S, null, 2);
+    var blob = new Blob([data], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "体成分计划备份-" + todayStr() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    S.lastExport = Date.now();
+    flush();
+    toast("已导出，请保存到网盘或发给自己");
+  }
+
+  function syncCalToDate() {
+    ui.cal = { y: parseInt(ui.date.slice(0, 4), 10), m: parseInt(ui.date.slice(5, 7), 10) - 1 };
+  }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "toast";
+      el.className = "toast";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2200);
+  }
+
+  window.addEventListener("beforeunload", flush);
+
+  /* 启动 */
+  try {
+    localStorage.setItem("__bc_test", "1");
+    localStorage.removeItem("__bc_test");
+  } catch (e) {
+    setTimeout(function () { toast("浏览器禁用了本地存储，记录无法保存"); }, 800);
+  }
+  render();
+})();
+
+</script>
+
+<script>
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
